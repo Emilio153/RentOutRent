@@ -5,6 +5,8 @@ import com.daw.alquiler.persistence.repositories.PersonaRepository;
 import com.daw.alquiler.services.exceptions.PersonaNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +40,20 @@ public class PersonaService {
             throw new PersonaNotFoundException("No se puede eliminar. Persona no encontrada");
         }
         personaRepository.deleteById(id);
+    }
+ // ====================================================================
+    // MÉTODO OBLIGATORIO DE USERDETAILSSERVICE
+    // ====================================================================
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // En nuestro caso, el 'username' es el email
+        Persona persona = personaRepository.findByEmail(username);
+        
+        if (persona == null) {
+            throw new UsernameNotFoundException("El usuario con email " + username + " no existe.");
+        }
+        
+        // Devolvemos la entidad Persona (que ya implementa UserDetails)
+        return persona; 
     }
 }
