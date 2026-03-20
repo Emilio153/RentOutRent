@@ -1,7 +1,8 @@
-package com.daw.alquiler.controllers;
+package com.daw.alquiler.web.controllers;
 
 import com.daw.alquiler.persistence.entities.Huesped;
 import com.daw.alquiler.services.HuespedService;
+import com.daw.alquiler.services.ReservaService;
 import com.daw.alquiler.services.exceptions.HuespedNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class HuespedController {
 
     @Autowired
     private HuespedService huespedService;
+    
+    @Autowired
+    private ReservaService reservaService;
 
     @GetMapping
     public ResponseEntity<?> findAll() {
@@ -27,6 +31,17 @@ public class HuespedController {
         try {
             return ResponseEntity.ok(this.huespedService.findById(id));
         } catch (HuespedNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+    
+ // Asegúrate de inyectar ReservaService arriba con @Autowired
+    @GetMapping("/{id}/reservas")
+    public ResponseEntity<?> getReservasByHuesped(@PathVariable int id) {
+        try {
+            this.huespedService.findById(id); // Verifica que el huésped existe
+            return ResponseEntity.ok(this.reservaService.findByHuesped(id));
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }

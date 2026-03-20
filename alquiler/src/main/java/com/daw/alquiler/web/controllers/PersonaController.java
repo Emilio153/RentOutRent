@@ -1,4 +1,4 @@
-package com.daw.alquiler.controllers;
+package com.daw.alquiler.web.controllers;
 
 import com.daw.alquiler.persistence.entities.Persona;
 import com.daw.alquiler.services.PersonaService;

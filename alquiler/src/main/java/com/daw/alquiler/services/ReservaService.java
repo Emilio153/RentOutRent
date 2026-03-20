@@ -23,6 +23,13 @@ public class ReservaService {
         return reservaRepository.findById(id)
                 .orElseThrow(() -> new ReservaNotFoundException("No se encontró la reserva con ID: " + id));
     }
+    
+    public List<Reserva> findByPropietario(int propietarioId) {
+        return reservaRepository.findByPropiedadPropietarioId(propietarioId);
+    }
+    public List<Reserva> findByHuesped(int huespedId) {
+        return reservaRepository.findByHuespedId(huespedId);
+    }
 
     public Reserva save(Reserva reserva) {
         return reservaRepository.save(reserva);

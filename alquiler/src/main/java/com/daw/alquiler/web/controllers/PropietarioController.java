@@ -1,7 +1,9 @@
-package com.daw.alquiler.controllers;
+package com.daw.alquiler.web.controllers;
 
 import com.daw.alquiler.persistence.entities.Propietario;
+import com.daw.alquiler.services.PropiedadService;
 import com.daw.alquiler.services.PropietarioService;
+import com.daw.alquiler.services.ReservaService;
 import com.daw.alquiler.services.exceptions.PropietarioNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,12 @@ public class PropietarioController {
 
     @Autowired
     private PropietarioService propietarioService;
+    
+    @Autowired 
+    private PropiedadService propiedadService;
+    
+    @Autowired
+    private ReservaService reservaService;
 
     @GetMapping
     public ResponseEntity<?> findAll() {
@@ -27,6 +35,29 @@ public class PropietarioController {
         try {
             return ResponseEntity.ok(this.propietarioService.findById(id));
         } catch (PropietarioNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+    
+ // Devuelve todas las propiedades de un propietario específico
+    @GetMapping("/{id}/propiedades")
+    public ResponseEntity<?> getPropiedadesByPropietario(@PathVariable int id) {
+        try {
+            // Reutilizamos tu servicio para comprobar si el propietario existe
+            this.propietarioService.findById(id); 
+            return ResponseEntity.ok(this.propiedadService.findByPropietario(id));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+    
+ // Devuelve todas las reservas hechas a los alojamientos de este propietario
+    @GetMapping("/{id}/reservas")
+    public ResponseEntity<?> getReservasByPropietario(@PathVariable int id) {
+        try {
+            this.propietarioService.findById(id); 
+            return ResponseEntity.ok(this.reservaService.findByPropietario(id));
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }

@@ -1,0 +1,235 @@
+{
+	"info": {
+		"name": "Alquiler Vacacional API (MVP) - Sin Variables",
+		"description": "Colección completa con todos los CRUDs y Casos de Uso del Backend Spring Boot (URLs directas a localhost).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Personas / Auth",
+			"item": [
+				{
+					"name": "Listar Todas las Personas",
+					"request": {
+						"method": "GET",
+						"url": { "raw": "http://localhost:8092/api/personas", "host": ["localhost"], "port": "8092", "path": ["api", "personas"] }
+					}
+				},
+				{
+					"name": "Login (Autenticación Fake)",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"juan@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/personas/login", "host": ["localhost"], "port": "8092", "path": ["api", "personas", "login"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Propietarios",
+			"item": [
+				{
+					"name": "Listar Propietarios",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propietarios", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios"] } }
+				},
+				{
+					"name": "Obtener Propietario por ID",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propietarios/1", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios", "1"] } }
+				},
+				{
+					"name": "Ver MIS Propiedades (Custom)",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propietarios/1/propiedades", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios", "1", "propiedades"] } }
+				},
+				{
+					"name": "Ver MIS Reservas Recibidas (Custom)",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propietarios/1/reservas", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios", "1", "reservas"] } }
+				},
+				{
+					"name": "Registrar Propietario",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Nuevo Propietario\",\n    \"dni\": \"99887766Z\",\n    \"email\": \"nuevo.prop@demo.com\",\n    \"password\": \"1234\",\n    \"telefono\": \"+34666555444\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/propietarios", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios"] }
+					}
+				},
+				{
+					"name": "Actualizar Propietario",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Juan Propietario Editado\",\n    \"email\": \"juan.edit@test.com\",\n    \"telefono\": \"+34000000000\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/propietarios/1", "host": ["localhost"], "port": "8092", "path": ["api", "propietarios", "1"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Huéspedes",
+			"item": [
+				{
+					"name": "Listar Huéspedes",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/huespedes", "host": ["localhost"], "port": "8092", "path": ["api", "huespedes"] } }
+				},
+				{
+					"name": "Obtener Huésped por ID",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/huespedes/2", "host": ["localhost"], "port": "8092", "path": ["api", "huespedes", "2"] } }
+				},
+				{
+					"name": "Ver MIS Reservas (Custom)",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/huespedes/2/reservas", "host": ["localhost"], "port": "8092", "path": ["api", "huespedes", "2", "reservas"] } }
+				},
+				{
+					"name": "Registrar Huésped",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Nuevo Huésped\",\n    \"dni\": \"55443322X\",\n    \"email\": \"nuevo.huesped@demo.com\",\n    \"password\": \"1234\",\n    \"telefono\": \"+34600112233\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/huespedes", "host": ["localhost"], "port": "8092", "path": ["api", "huespedes"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Propiedades",
+			"item": [
+				{
+					"name": "Listar Propiedades",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propiedades", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades"] } }
+				},
+				{
+					"name": "Obtener Propiedad por ID",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propiedades/1", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades", "1"] } }
+				},
+				{
+					"name": "Buscar Propiedades (Custom)",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/propiedades/buscar?termino=Madrid", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades", "buscar"], "query": [ { "key": "termino", "value": "Madrid" } ] } }
+				},
+				{
+					"name": "Crear Propiedad",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Nueva Casa Rural\",\n    \"descripcion\": \"Casa en el campo con chimenea.\",\n    \"direccion\": \"Pueblo Perdido 1\",\n    \"precio_noche\": 75.50,\n    \"max_huespedes\": 4,\n    \"calendario\": \"2024-12-01\",\n    \"propietario\": { \"id\": 1 }\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/propiedades", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades"] }
+					}
+				},
+				{
+					"name": "Actualizar Propiedad",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Apartamento Centro (Editado)\",\n    \"descripcion\": \"Descripción modificada\",\n    \"direccion\": \"Calle Mayor 10, Madrid\",\n    \"precio_noche\": 90.00,\n    \"max_huespedes\": 2,\n    \"calendario\": \"2024-01-01\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/propiedades/1", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades", "1"] }
+					}
+				},
+				{
+					"name": "Borrar Propiedad",
+					"request": { "method": "DELETE", "url": { "raw": "http://localhost:8092/api/propiedades/999", "host": ["localhost"], "port": "8092", "path": ["api", "propiedades", "999"] } }
+				}
+			]
+		},
+		{
+			"name": "5. Reservas",
+			"item": [
+				{
+					"name": "Listar Reservas",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/reservas", "host": ["localhost"], "port": "8092", "path": ["api", "reservas"] } }
+				},
+				{
+					"name": "Obtener Reserva por ID",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/reservas/1", "host": ["localhost"], "port": "8092", "path": ["api", "reservas", "1"] } }
+				},
+				{
+					"name": "Ver Mensajes de Reserva (Chat)",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/reservas/1/mensajes", "host": ["localhost"], "port": "8092", "path": ["api", "reservas", "1", "mensajes"] } }
+				},
+				{
+					"name": "Crear Reserva",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fecha_inicio\": \"2024-12-24\",\n    \"fecha_fin\": \"2024-12-31\",\n    \"total\": 550.00,\n    \"estado\": \"PENDIENTE\",\n    \"propiedad\": { \"id\": 1 },\n    \"huesped\": { \"id\": 2 }\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/reservas", "host": ["localhost"], "port": "8092", "path": ["api", "reservas"] }
+					}
+				},
+				{
+					"name": "Aceptar/Cancelar Reserva (Actualizar)",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fecha_inicio\": \"2024-08-10\",\n    \"fecha_fin\": \"2024-08-15\",\n    \"total\": 425.00,\n    \"estado\": \"CONFIRMADA\"\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/reservas/1", "host": ["localhost"], "port": "8092", "path": ["api", "reservas", "1"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Mensajes",
+			"item": [
+				{
+					"name": "Listar Mensajes",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/mensajes", "host": ["localhost"], "port": "8092", "path": ["api", "mensajes"] } }
+				},
+				{
+					"name": "Enviar Mensaje",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contenido\": \"Hola, me gustaría saber si tienen parking.\",\n    \"reserva\": { \"id\": 1 },\n    \"emisor\": { \"id\": 2 },\n    \"receptor\": { \"id\": 1 }\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/mensajes", "host": ["localhost"], "port": "8092", "path": ["api", "mensajes"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Imágenes",
+			"item": [
+				{
+					"name": "Listar Imágenes",
+					"request": { "method": "GET", "url": { "raw": "http://localhost:8092/api/imagenes", "host": ["localhost"], "port": "8092", "path": ["api", "imagenes"] } }
+				},
+				{
+					"name": "Añadir Imagen a Propiedad",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/json" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://images.unsplash.com/photo-ejemplo\",\n    \"propiedad\": { \"id\": 1 }\n}"
+						},
+						"url": { "raw": "http://localhost:8092/api/imagenes", "host": ["localhost"], "port": "8092", "path": ["api", "imagenes"] }
+					}
+				}
+			]
+		}
+	]
+}

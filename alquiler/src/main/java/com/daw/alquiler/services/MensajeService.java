@@ -23,6 +23,10 @@ public class MensajeService {
         return mensajeRepository.findById(id)
                 .orElseThrow(() -> new MensajeNotFoundException("No se encontró el mensaje con ID: " + id));
     }
+    
+    public List<Mensaje> findByReserva(int reservaId) {
+        return mensajeRepository.findByReservaId(reservaId);
+    }
 
     public Mensaje save(Mensaje mensaje) {
         return mensajeRepository.save(mensaje);
