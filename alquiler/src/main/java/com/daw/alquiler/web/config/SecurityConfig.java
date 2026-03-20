@@ -1,79 +1,59 @@
 package com.daw.alquiler.web.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
-@Service
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    // Clave secreta (Mínimo 256 bits). 
-    // En un proyecto real de empresa, esto jamás se pone aquí, se pone en application.properties.
-    // Para el MVP lo dejamos a fuego para que no te dé problemas al arrancar.
-    private static final String SECRET_KEY = "MzUzNzc4MzYzMjJEMzQ0Mzg0RTYyNTA2NTUzMjg0NjI1MDE2MTM2ODQ2Mzc0RTM4NDM2QTU0MzEzMjM5";
+    @Autowired
+    private JwtFilter jwtFilter;
 
-    // 1. Extrae el email (Username) del token
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            // Desactivamos CSRF porque usamos JWT y no sesiones tradicionales
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configure(http))
+            
+            // Decimos qué rutas son públicas y cuáles privadas
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll() // Login es público
+                // Puedes añadir rutas públicas como ver propiedades si quieres:
+                // .requestMatchers(HttpMethod.GET, "/api/propiedades").permitAll()
+                .anyRequest().authenticated() // Todo lo demás requiere JWT
+            )
+            
+            // Decimos que la aplicación NO guarde estado (Stateless)
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
+            // Metemos a nuestro "Portero" antes del filtro oficial de Spring
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    // Configura el AuthenticationManager usado en AuthService
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
-    // 2. Genera un token nuevo (sin datos extra)
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
-
-    // 3. Genera el token con datos extra (Roles, etc) y le pone fecha de caducidad (24 horas)
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // Guardamos el email
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Firma electrónica
-                .compact();
-    }
-
-    // 4. Valida si el token pertenece al usuario y si no ha caducado
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    // Lee el token y lo desencripta con nuestra palabra secreta
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    // Convierte nuestro SECRET_KEY en una llave criptográfica real
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
+    // Encriptador de contraseñas. Para el MVP usamos texto plano (NoOp), 
+    // pero para producción se cambiaría a BCryptPasswordEncoder()
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance(); 
     }
 }
