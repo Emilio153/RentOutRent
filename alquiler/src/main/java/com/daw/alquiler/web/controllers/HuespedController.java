@@ -2,13 +2,13 @@ package com.daw.alquiler.web.controllers;
 
 import com.daw.alquiler.persistence.entities.Huesped;
 import com.daw.alquiler.services.HuespedService;
-import com.daw.alquiler.services.ReservaService;
 import com.daw.alquiler.services.exceptions.HuespedNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/huespedes")
@@ -17,60 +17,30 @@ public class HuespedController {
 
     @Autowired
     private HuespedService huespedService;
-    
-    @Autowired
-    private ReservaService reservaService;
 
     @GetMapping
-    public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok(this.huespedService.findAll());
+    public ResponseEntity<List<Huesped>> listarTodos() {
+        return ResponseEntity.ok(huespedService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable int id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(this.huespedService.findById(id));
-        } catch (HuespedNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
-    }
-    
- // Asegúrate de inyectar ReservaService arriba con @Autowired
-    @GetMapping("/{id}/reservas")
-    public ResponseEntity<?> getReservasByHuesped(@PathVariable int id) {
-        try {
-            this.huespedService.findById(id); // Verifica que el huésped existe
-            return ResponseEntity.ok(this.reservaService.findByHuesped(id));
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
-    }
-
-    @PostMapping
-    public ResponseEntity<?> save(@RequestBody Huesped huesped) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.huespedService.save(huesped));
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al registrar huésped.");
+            return ResponseEntity.ok(huespedService.findById(id));
+        } catch (HuespedNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Huesped huesped) {
+    public ResponseEntity<?> actualizarHuesped(@PathVariable int id, @RequestBody Huesped detalles) {
         try {
-            return ResponseEntity.ok(this.huespedService.update(id, huesped));
-        } catch (HuespedNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id) {
-        try {
-            this.huespedService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (HuespedNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+            Huesped actualizado = huespedService.update(id, detalles);
+            return ResponseEntity.ok(actualizado);
+        } catch (HuespedNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Error al actualizar el huésped\"}");
         }
     }
 }

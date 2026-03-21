@@ -1,67 +1,84 @@
 package com.daw.alquiler.web.controllers;
 
-import java.util.List;
-
+import com.daw.alquiler.persistence.entities.Propiedad;
+import com.daw.alquiler.services.PropiedadService;
+import com.daw.alquiler.services.exceptions.PropiedadNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.daw.alquiler.persistence.entities.Propiedad;
-import com.daw.alquiler.persistence.repositories.PropiedadRepository;
-import com.daw.alquiler.services.PropiedadService;
+import java.util.List;
 
 @RestController
-@RequestMapping("/propiedades")
-@CrossOrigin(origins = "*") // Importante para que tu Angular pueda conectarse sin líos de CORS
+@RequestMapping("/api/propiedades")
+@CrossOrigin(origins = "*")
 public class PropiedadController {
 
     @Autowired
-    private PropiedadRepository propiedadRepository;
-    
-    @Autowired
     private PropiedadService propiedadService;
 
-    // Listar todas
+    // ==========================================
+    // RUTAS PÚBLICAS (No necesitan Token)
+    // ==========================================
+
     @GetMapping
-    public List<Propiedad> listarPropiedades() {
-        return propiedadRepository.findAll();
+    public ResponseEntity<List<Propiedad>> listarTodas() {
+        return ResponseEntity.ok(propiedadService.findAll());
     }
 
-    // Crear una propiedad
-    @PostMapping
-    public ResponseEntity<Propiedad> crearPropiedad(@RequestBody Propiedad propiedad) {
-        // OJO: En un MVP real, aquí validarías que venga el Propietario ID
-        Propiedad nueva = propiedadRepository.save(propiedad);
-        return ResponseEntity.ok(nueva);
-    }
-    
-    // Extra: Obtener por ID (te será muy útil para el detalle)
     @GetMapping("/{id}")
-    public ResponseEntity<Propiedad> obtenerPropiedad(@PathVariable int id) {
-        return propiedadRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
- // Endpoint: GET /api/propiedades/buscar?termino=Madrid
-    @GetMapping("/buscar")
-    public ResponseEntity<?> buscar(@RequestParam String termino) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable int id) {
         try {
-            List<Propiedad> resultados = this.propiedadService.buscarPropiedades(termino);
-            if (resultados.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron propiedades para: " + termino);
-            }
-            return ResponseEntity.ok(resultados);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al realizar la búsqueda");
+            Propiedad propiedad = propiedadService.findById(id);
+            return ResponseEntity.ok(propiedad);
+        } catch (PropiedadNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Propiedad>> buscar(@RequestParam(name = "termino") String terminoBusqueda) {
+        // Llama a tu método personalizado que busca por título o dirección
+        return ResponseEntity.ok(propiedadService.buscarPropiedades(terminoBusqueda));
+    }
+
+    // ==========================================
+    // RUTAS PRIVADAS (Necesitan Token JWT)
+    // ==========================================
+
+    @PostMapping
+    public ResponseEntity<?> crearPropiedad(@RequestBody Propiedad propiedad) {
+        try {
+            Propiedad nuevaPropiedad = propiedadService.save(propiedad);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPropiedad);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Error al crear la propiedad\"}");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarPropiedad(@PathVariable int id, @RequestBody Propiedad detalles) {
+        try {
+            // Llama a tu método update que ya se encarga de buscar y setear los datos
+            Propiedad propiedadActualizada = propiedadService.update(id, detalles);
+            return ResponseEntity.ok(propiedadActualizada);
+        } catch (PropiedadNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Error al actualizar la propiedad\"}");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> borrarPropiedad(@PathVariable int id) {
+        try {
+            propiedadService.deleteById(id); // Usa tu método deleteById
+            return ResponseEntity.ok("{\"mensaje\": \"Propiedad borrada con éxito\"}");
+        } catch (PropiedadNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"No se pudo borrar la propiedad\"}");
         }
     }
 }

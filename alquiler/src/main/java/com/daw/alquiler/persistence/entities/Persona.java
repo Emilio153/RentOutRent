@@ -14,66 +14,74 @@ import java.util.List;
 
 @Entity
 @Table(name = "persona")
-@Inheritance(strategy = InheritanceType.JOINED) // Estrategia solicitada
-@Getter @Setter @NoArgsConstructor
-public class Persona implements UserDetails { // <-- Implementamos la interfaz
+@Inheritance(strategy = InheritanceType.JOINED)
+@Getter 
+@Setter 
+@NoArgsConstructor
+public class Persona implements UserDetails {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(length = 100)
     private String nombre;
-
+    @JsonIgnore
     @Column(length = 20, unique = true)
     private String dni;
 
     @Column(length = 100)
     private String email;
 
-    private String password;
-
     @Column(length = 20)
     private String telefono;
 
-    // ====================================================================
-    // MÉTODOS OBLIGATORIOS DE USERDETAILS (SPRING SECURITY)
-    // ====================================================================
+    // Guardamos la contraseña en BD, pero NO la mostramos en el JSON
+    @Column(nullable = false)
+    private String password;
 
+    // =========================================================
+    // MÉTODOS DE SPRING SECURITY (UserDetails)
+    // =========================================================
+
+    @JsonIgnore 
     @Override
-    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonIgnore 
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Por ahora le damos un rol genérico a todos. 
-        // Si más adelante quieres diferenciar, puedes poner lógicas aquí.
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
-    @JsonIgnore
     public String getUsername() {
-        return this.email; // Usamos tu email como identificador para el Login
+        return email; 
     }
 
+    @JsonIgnore 
     @Override
-    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore 
     @Override
-    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore // <-- ¡Y AQUÍ!
     @Override
-    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore // <-- ¡Y AQUÍ!
     @Override
-    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

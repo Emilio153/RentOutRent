@@ -1,4 +1,12 @@
-package com.daw.alquiler.web.config;
+package com.daw.alquiler.services;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
@@ -6,18 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+@Service
+public class JwtService {
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-@Component
-public class JwtUtils {
-
-	 // Clave secreta (Mínimo 256 bits). 
+    // Clave secreta (Mínimo 256 bits). 
     // En un proyecto real de empresa, esto jamás se pone aquí, se pone en application.properties.
     // Para el MVP lo dejamos a fuego para que no te dé problemas al arrancar.
     private static final String SECRET_KEY = "MzUzNzc4MzYzMjJEMzQ0Mzg0RTYyNTA2NTUzMjg0NjI1MDE2MTM2ODQ2Mzc0RTM4NDM2QTU0MzEzMjM5";
@@ -77,4 +77,3 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
-

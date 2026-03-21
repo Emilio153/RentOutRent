@@ -13,14 +13,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- --------------------------------------------------------
 -- 1. PERSONAS (Sin ID, es autoincrement)
+-- Todas las contraseñas son '123456' encriptadas con BCrypt
 -- --------------------------------------------------------
 INSERT INTO persona (nombre, dni, email, password, telefono) VALUES
-('Juan Propietario', '11111111A', 'juan@test.com', '123456', '+34600100100'),
-('Maria Huesped', '22222222B', 'maria@test.com', '123456', '+34600200200'),
-('Pedro Anfitrion', '33333333C', 'pedro@test.com', '123456', '+34600300300'),
-('Laura Viajera', '44444444D', 'laura@test.com', '123456', '+34600400400'),
-('Carlos Dueño', '55555555E', 'carlos@test.com', '123456', '+34600500500');
-
+('Juan Propietario', '11111111A', 'juan@test.com', '$2a$10$X8O.U0X3mF/zG7/gQ4h5eO2P7s.e7lJ1s/gV.mQ/rW.8/9C/w.b6u', '+34600100100'),
+('Maria Huesped', '22222222B', 'maria@test.com', '$2a$10$X8O.U0X3mF/zG7/gQ4h5eO2P7s.e7lJ1s/gV.mQ/rW.8/9C/w.b6u', '+34600200200'),
+('Pedro Anfitrion', '33333333C', 'pedro@test.com', '$2a$10$X8O.U0X3mF/zG7/gQ4h5eO2P7s.e7lJ1s/gV.mQ/rW.8/9C/w.b6u', '+34600300300'),
+('Laura Viajera', '44444444D', 'laura@test.com', '$2a$10$X8O.U0X3mF/zG7/gQ4h5eO2P7s.e7lJ1s/gV.mQ/rW.8/9C/w.b6u', '+34600400400'),
+('Carlos Dueño', '55555555E', 'carlos@test.com', '$2a$10$X8O.U0X3mF/zG7/gQ4h5eO2P7s.e7lJ1s/gV.mQ/rW.8/9C/w.b6u', '+34600500500');
 -- --------------------------------------------------------
 -- 2. VINCULAR ROLES (Usamos el email para recuperar el ID generado)
 -- --------------------------------------------------------

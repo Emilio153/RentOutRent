@@ -3,11 +3,12 @@ package com.daw.alquiler.web.controllers;
 import com.daw.alquiler.persistence.entities.Persona;
 import com.daw.alquiler.services.PersonaService;
 import com.daw.alquiler.services.exceptions.PersonaNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/personas")
@@ -17,37 +18,30 @@ public class PersonaController {
     @Autowired
     private PersonaService personaService;
 
+    // Todas las rutas son PRIVADAS (requieren Token)
     @GetMapping
-    public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok(this.personaService.findAll());
+    public ResponseEntity<List<Persona>> listarTodas() {
+        return ResponseEntity.ok(personaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable int id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(this.personaService.findById(id));
-        } catch (PersonaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+            return ResponseEntity.ok(personaService.findById(id));
+        } catch (PersonaNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Persona credenciales) {
-        try {
-            Persona personaLogueada = this.personaService.login(credenciales.getEmail(), credenciales.getPassword());
-            return ResponseEntity.ok(personaLogueada);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email o contraseña incorrectos");
-        }
-    }
-    
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id) {
+    public ResponseEntity<?> borrarPersona(@PathVariable int id) {
         try {
-            this.personaService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (PersonaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+            personaService.deleteById(id);
+            return ResponseEntity.ok("{\"mensaje\": \"Persona borrada con éxito\"}");
+        } catch (PersonaNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"No se pudo borrar la persona\"}");
         }
     }
 }
