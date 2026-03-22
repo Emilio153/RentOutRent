@@ -5,6 +5,8 @@ import com.daw.alquiler.services.dto.LoginRequest;
 import com.daw.alquiler.services.dto.LoginResponse;
 import com.daw.alquiler.services.dto.RefreshDTO;
 import com.daw.alquiler.services.dto.RegisterRequest;
+import com.daw.alquiler.services.exceptions.AuthException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,18 +21,12 @@ public class AuthController {
     private AuthService authService;
 
     // 1. ENDPOINT DE LOGIN
- // 1. ENDPOINT DE LOGIN
+    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            LoginResponse response = authService.login(request);
-            return ResponseEntity.ok(response);
-        } catch (org.springframework.security.core.AuthenticationException e) {
-            // Si la contraseña está mal o el usuario no existe, entramos aquí (401)
-            // en lugar de ir a la ruta /error que nos daba el 403
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"Credenciales incorrectas o usuario no encontrado\"}");
-        }
+        // Mira qué limpio queda sin el try-catch
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     // 2. ENDPOINT DE REGISTRO
@@ -51,5 +47,12 @@ public class AuthController {
         // Por ahora devolvemos un mensaje o un token simulado para tu MVP
         LoginResponse response = authService.refresh(request);
         return ResponseEntity.ok(response);
+    }
+    
+ // Este método atrapa el error de credenciales y evita el 403
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<?> handleAuthException(AuthException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("{\"error\": \"" + e.getMessage() + "\"}");
     }
 }

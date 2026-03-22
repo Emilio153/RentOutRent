@@ -1,5 +1,6 @@
 package com.daw.alquiler.persistence.entities;
 
+import com.daw.alquiler.persistence.entities.enums.TipoUsuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,7 +37,11 @@ public class Persona implements UserDetails {
 
     @Column(length = 20)
     private String telefono;
-
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoUsuario tipoUsuario;
+    
     // Guardamos la contraseña en BD, pero NO la mostramos en el JSON
     @Column(nullable = false)
     private String password;
@@ -74,13 +79,13 @@ public class Persona implements UserDetails {
         return true;
     }
 
-    @JsonIgnore // <-- ¡Y AQUÍ!
+    @JsonIgnore 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    @JsonIgnore // <-- ¡Y AQUÍ!
+    @JsonIgnore 
     @Override
     public boolean isEnabled() {
         return true;

@@ -1,5 +1,7 @@
 package com.daw.alquiler.persistence.entities;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,4 +39,7 @@ public class Mensaje {
     @JoinColumn(name = "receptor_id", nullable = false)
     @JsonIgnoreProperties({"email", "telefono", "username","hibernateLazyInitializer", "handler"}) // Solo dejará el ID y el Nombre
     private Persona receptor;
+    
+    @Column(name = "enviado_en")
+    private LocalDateTime enviadoEn;
 }

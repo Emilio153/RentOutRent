@@ -1,5 +1,6 @@
 package com.daw.alquiler.persistence.entities;
 
+import com.daw.alquiler.persistence.entities.enums.Estado;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;

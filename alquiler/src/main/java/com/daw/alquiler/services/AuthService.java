@@ -5,11 +5,13 @@ import com.daw.alquiler.services.dto.LoginRequest;
 import com.daw.alquiler.services.dto.LoginResponse;
 import com.daw.alquiler.services.dto.RefreshDTO;
 import com.daw.alquiler.services.dto.RegisterRequest;
+import com.daw.alquiler.services.exceptions.AuthException;
 import com.daw.alquiler.web.config.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,24 +32,29 @@ public class AuthService {
     @Autowired
     private PersonaRepository personaRepository; 
 
-    // ==========================================
+ // ==========================================
     // 1. LÓGICA DE LOGIN
     // ==========================================
     public LoginResponse login(LoginRequest request) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
 
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String token = jwtUtils.generateToken(userDetails);
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String token = jwtUtils.generateToken(userDetails);
 
-        return new LoginResponse(token);
+            return new LoginResponse(token);
+
+        } catch (AuthenticationException e) {
+            // ¡Aquí ocurre la magia! Atrapamos el error de Spring y lanzamos el nuestro
+            throw new AuthException("Credenciales incorrectas o usuario no encontrado");
+        }
     }
-
  // ==========================================
     // 2. LÓGICA DE REGISTRO
     // ==========================================
-    public String register(RegisterRequest request) {
+public String register(RegisterRequest request) {
         
         // 1. Validar que las contraseñas coinciden (usando los nombres de tu DTO real)
         if (!request.getPassword().equals(request.getConfirmPassword())) {
@@ -60,14 +67,20 @@ public class AuthService {
         }
 
         // 3. Crear la entidad (Usamos la herencia de tu BD)
-        // IMPORTANTE: Asegúrate de tener importadas las clases Persona, Propietario y Huesped
         com.daw.alquiler.persistence.entities.Persona nuevoUsuario;
         
         if ("PROPIETARIO".equalsIgnoreCase(request.getTipoUsuario())) {
             nuevoUsuario = new com.daw.alquiler.persistence.entities.Propietario();
+            
+            // 🔥 LÍNEA AÑADIDA: Rellenamos la columna tipo_usuario
+            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.PROPIETARIO);
+            
         } else {
             // Por defecto, si no manda nada o manda "HUESPED", creamos un huésped
             nuevoUsuario = new com.daw.alquiler.persistence.entities.Huesped();
+            
+            // 🔥 LÍNEA AÑADIDA: Rellenamos la columna tipo_usuario
+            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.HUESPED);
         }
         
         // Mapeamos todos los campos de tu DTO
@@ -76,10 +89,9 @@ public class AuthService {
         nuevoUsuario.setEmail(request.getEmail());
         nuevoUsuario.setTelefono(request.getTelefono());
         
-        // ¡LA MAGIA DE BCRYPT! Encriptamos la contraseña
+        // 🚨 IMPORTANTE: Asegúrate de tener estas dos líneas al final de tu método 
+        // (parece que se cortaron en tu mensaje)
         nuevoUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        // 4. Guardar en la Base de Datos
         personaRepository.save(nuevoUsuario);
 
         return "Usuario registrado con éxito";

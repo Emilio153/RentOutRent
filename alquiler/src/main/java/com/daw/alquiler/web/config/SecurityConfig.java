@@ -34,10 +34,13 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
+					
 					// --- RUTAS PÚBLICAS (No necesitan Token) ---
-					.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+					// .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+					// .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+					.requestMatchers("/api/auth/**", "/error").permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/imagenes").permitAll()
+					
 					// Dejamos públicos los registros para que la gente pueda crear su cuenta
 					.requestMatchers(HttpMethod.POST, "/api/propietarios").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/huespedes").permitAll()
@@ -47,7 +50,7 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.GET, "/api/propiedades/buscar").permitAll()
 					
 					// --- RUTAS PRIVADAS (Necesitan Token JWT) ---
-					// Ejemplo de si tuviéramos roles: .requestMatchers(HttpMethod.GET, "/api/reservas").hasAnyRole("USER")
+					
 					.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
