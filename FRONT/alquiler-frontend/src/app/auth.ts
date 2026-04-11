@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -6,15 +6,42 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  // ¡La misma URL que usábamos en Postman!
-  private apiUrl = 'http://localhost:8092/api/auth/login';
 
-  // Inyectamos el HttpClient para poder hacer peticiones
-  constructor(private http: HttpClient) { }
+  // La URL base de tu backend Spring Boot
+  private apiUrl = 'http://localhost:8092/api/auth';
 
-  // Método que recibe los datos y devuelve la respuesta del backend
+  // Inyectamos el HttpClient de Angular (la forma moderna)
+  private http = inject(HttpClient);
+
+  constructor() { }
+
+  // ==========================================
+  // 1. MÉTODO DE LOGIN
+  // ==========================================
   login(email: string, password: string): Observable<any> {
-    const body = { email, password };
-    return this.http.post(this.apiUrl, body);
+    const loginData = { email, password };
+    return this.http.post(`${this.apiUrl}/login`, loginData);
+  }
+
+  // ==========================================
+  // 2. MÉTODO DE REGISTRO
+  // ==========================================
+  register(userData: any): Observable<any> {
+    // Enviamos el objeto entero (nombre, email, password, etc.) a tu endpoint
+    return this.http.post(`${this.apiUrl}/register`, userData);
+  }
+
+  // ==========================================
+  // 3. MÉTODOS DE UTILIDAD (Opcionales pero útiles)
+  // ==========================================
+  
+  // Para saber si el usuario está logueado comprobando si tiene token
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('jwt_token');
+  }
+
+  // Para cerrar sesión borrando el token
+  logout(): void {
+    localStorage.removeItem('jwt_token');
   }
 }

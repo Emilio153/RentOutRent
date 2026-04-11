@@ -1,34 +1,65 @@
-<div class="login-container">
-  <div class="login-card">
+<div class="login-body">
+  <div class="container" [class.right-panel-active]="isRightPanelActive">
     
-    <h2>RentOutRent</h2>
-    <p>Introduce tus credenciales para continuar</p>
-    
-    <form (submit)="onLogin()">
-      <div class="input-group">
-        <label>Correo Electrónico</label>
-        <input 
-          type="email" 
-          name="email" 
-          [(ngModel)]="email" 
-          placeholder="ejemplo@correo.com" 
-          required>
-      </div>
-      
-      <div class="input-group">
-        <label>Contraseña</label>
-        <input 
-          type="password" 
-          name="password" 
-          [(ngModel)]="password" 
-          placeholder="********" 
-          required>
-      </div>
-      
-      <button type="submit" class="login-button">
-        Iniciar Sesión en ROR
-      </button>
-    </form>
+    <div class="form-container sign-up-container">
+      <form (submit)="onRegister()">
+        <h2>Crear Cuenta</h2>
+        <p class="subtitle">Únete a RentOutRent</p>
 
+        <div class="input-group">
+          <input type="text" name="nombre" [(ngModel)]="registro.nombre" placeholder="Nombre completo" required>
+        </div>
+        <div class="input-group">
+          <input type="email" name="email" [(ngModel)]="registro.email" placeholder="Correo electrónico" required>
+        </div>
+        <div class="input-group">
+          <input type="text" name="dni" [(ngModel)]="registro.dni" placeholder="DNI / Pasaporte" required>
+        </div>
+        <div class="input-group">
+          <input type="tel" name="telefono" [(ngModel)]="registro.telefono" placeholder="Teléfono" required>
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" [(ngModel)]="registro.password" placeholder="Contraseña" required>
+        </div>
+        <div class="input-group">
+          <input type="password" name="confirmPassword" [(ngModel)]="registro.confirmPassword" placeholder="Confirmar contraseña" required>
+        </div>
+        <button type="submit" class="login-button">Registrarse</button>
+      </form>
+    </div>
+
+    <div class="form-container sign-in-container">
+      <form (submit)="onLogin()">
+        <h2>RentOutRent</h2>
+        <p class="subtitle">Introduce tus credenciales para continuar</p>
+        
+        <div class="input-group">
+          <input type="email" name="emailLogin" [(ngModel)]="emailLogin" placeholder="ejemplo@correo.com" required>
+        </div>
+        <div class="input-group">
+          <input type="password" name="passwordLogin" [(ngModel)]="passwordLogin" placeholder="********" required>
+        </div>
+        
+        <button type="submit" class="login-button">Iniciar Sesión en ROR</button>
+      </form>
+    </div>
+
+    <div class="overlay-container">
+      <div class="overlay">
+        
+        <div class="overlay-panel overlay-left">
+          <h2>¡Bienvenido de nuevo!</h2>
+          <p>¿Ya tienes una cuenta en RentOutRent?</p>
+          <button class="ghost" (click)="togglePanel()">Iniciar Sesión</button>
+        </div>
+        
+        <div class="overlay-panel overlay-right">
+          <h2>¡Hola, Viajero!</h2>
+          <p>¿Aún no tienes cuenta? Únete a nosotros y descubre tu próximo destino.</p>
+          <button class="ghost" (click)="togglePanel()">Registrarse</button>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
