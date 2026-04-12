@@ -58,7 +58,7 @@ export class LoginComponent {
         
         // ¡Magia! Redirigimos al usuario a la vista principal
         // Descomenta esto cuando tengas el componente creado
-        // this.router.navigate(['/propiedades']); 
+        this.router.navigate(['/propiedades']); 
         alert('¡Bienvenido! Has iniciado sesión correctamente.');
       },
       error: (err) => {

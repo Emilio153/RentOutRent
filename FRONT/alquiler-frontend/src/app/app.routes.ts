@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-
-import { LoginComponent } from './login/login'; 
+import { LoginComponent } from './login/login'; // Ajusta tus rutas
+import { Catalogo } from './pages/catalogo/catalogo'; // Ajusta tus rutas
 
 export const routes: Routes = [
-  // Si la ruta está vacía (localhost:4200), lo redirigimos a /login
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  
-  // Cuando la ruta sea /login, cargamos el componente
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent },
+  { path: 'catalogo', component: Catalogo },
+  // Si alguien entra a la raíz de la web, lo mandamos al login por defecto
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  // Si alguien pone una ruta que no existe, lo mandamos al login
+  { path: '**', redirectTo: '/login' } 
 ];

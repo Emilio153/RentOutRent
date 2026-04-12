@@ -56,10 +56,11 @@ public class Persona implements UserDetails {
         return password;
     }
 
-    @JsonIgnore 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        // Cogemos tu Enum (PROPIETARIO o HUESPED) y le ponemos el prefijo "ROLE_" 
+        // (Poner el prefijo ROLE_ es una buena práctica estándar en Spring Security)
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.tipoUsuario.name()));
     }
 
     @Override

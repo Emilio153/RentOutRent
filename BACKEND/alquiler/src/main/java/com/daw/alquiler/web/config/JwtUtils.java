@@ -37,8 +37,15 @@ public class JwtUtils {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    // 3. Genera el token con datos extra (Roles, etc) y le pone fecha de caducidad (24 horas)
+ // 3. Genera el token con datos extra (Roles, etc) y le pone fecha de caducidad (24 horas)
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        
+        // 🔥 MAGIA AÑADIDA: Extraemos el rol de Spring Security y lo guardamos en los claims
+        if (userDetails.getAuthorities() != null && !userDetails.getAuthorities().isEmpty()) {
+            String rol = userDetails.getAuthorities().iterator().next().getAuthority();
+            extraClaims.put("rol", rol);
+        }
+
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername()) // Guardamos el email
