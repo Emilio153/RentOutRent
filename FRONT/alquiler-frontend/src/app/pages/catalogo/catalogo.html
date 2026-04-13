@@ -1,1 +1,29 @@
-<p>catalogo works!</p>
+<main class="catalogo-container">
+  <header class="catalogo-header">
+    <h2 translate="no" class="notranslate">Descubre tu próximo destino</h2>
+    <p>Alojamientos excepcionales verificados por RentOutRent</p>
+  </header>
+
+  <section class="propiedades-grid" aria-label="Lista de propiedades disponibles">
+    <article class="propiedad-card" *ngFor="let casa of propiedades">
+      <div class="imagen-container">
+        <img [src]="casa.imagenUrl" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
+        <div class="favorito-btn" [class.activo]="esFavorito(casa.id)" (click)="toggleFavorito(casa)" aria-label="Añadir a favoritos">
+          ♥
+        </div>
+      </div>
+
+      <div class="info-container">
+        <div class="info-header">
+          <h3 class="titulo" translate="no">{{ casa.titulo }}</h3>
+          <span class="valoracion">★ {{ casa.valoracion }}</span>
+        </div>
+        <p class="ubicacion">{{ casa.ubicacion }}</p>
+        <div class="precio-reserva">
+          <p class="precio"><strong>{{ casa.precioPorNoche }}€</strong> <span class="noche">/ noche</span></p>
+          <button class="btn-reservar" [routerLink]="['/propiedad', casa.id]">Ver más</button>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>

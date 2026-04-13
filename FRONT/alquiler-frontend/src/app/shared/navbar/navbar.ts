@@ -16,7 +16,8 @@ export class Navbar {
   
   
   estaLogueado: boolean = false;
-
+  private favoritosService = inject(favoritos);
+  cantidadFavoritos: number = 0;
   constructor() {
     // Escucha en tiempo real si el usuario entra o sale
     this.authService.isLoggedIn$.subscribe(status => {
@@ -30,6 +31,7 @@ export class Navbar {
     // Aquí pon la palabra exacta que te salga en jwt.io. Normalmente es 'PROPIETARIO' o 'ROLE_PROPIETARIO'
     return rol === 'PROPIETARIO';
   }
+  
 
   cerrarSesion() {
     this.authService.logout();
