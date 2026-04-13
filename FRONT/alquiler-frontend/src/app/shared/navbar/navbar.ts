@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../auth';
+import { FavoritosService } from '../services/favoritos.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,15 +14,18 @@ import { AuthService } from '../../auth';
 export class Navbar {
   private authService = inject(AuthService);
   private router = inject(Router);
-  
-  
   estaLogueado: boolean = false;
-  private favoritosService = inject(favoritos);
+  private favoritosService = inject(FavoritosService);
   cantidadFavoritos: number = 0;
+
   constructor() {
     // Escucha en tiempo real si el usuario entra o sale
     this.authService.isLoggedIn$.subscribe(status => {
       this.estaLogueado = status;
+    });
+    // 🔥 Escuchamos en vivo cuántos favoritos hay
+    this.favoritosService.favoritos$.subscribe(favs => {
+      this.cantidadFavoritos = favs.length;
     });
   }
 

@@ -11,7 +11,9 @@
     </a>
 
     <a routerLink="/mis-reservas" class="nav-item">Mis Reservas</a>
-    
+    <a routerLink="/favoritos" class="nav-link" *ngIf="cantidadFavoritos > 0">
+       ❤️ Favoritos <span class="badge">{{ cantidadFavoritos }}</span>
+    </a>
     <button (click)="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
   </div>
 </nav>

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login';
 import { CatalogoComponent } from './pages/catalogo/catalogo';
-import { FavoritosComponent } from './shared/services/favoritos/favoritos';
+import { FavoritosComponent } from './shared/favoritos/favoritos';
 
 // ==========================================
 // 2. CONFIGURACIÓN DEL MAPA DE RUTAS

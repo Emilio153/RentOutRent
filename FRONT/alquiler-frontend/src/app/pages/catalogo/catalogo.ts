@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { FavoritosService } from '../../shared/services/favoritos.service';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -17,12 +16,11 @@ export interface Propiedad {
   selector: 'app-catalogo',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  // 🔥 ACTUALIZADO A TUS NOMBRES CORTOS 🔥
   templateUrl: './catalogo.html',
-  styleUrl: './catalogo.css' 
+  styleUrls: ['./catalogo.css']
 })
 export class CatalogoComponent {
-  private favoritosService = inject(FavoritosService);
+  
   // Datos de prueba (Mock Data) para poder maquetar
   propiedades: Propiedad[] = [
     {
@@ -59,11 +57,4 @@ export class CatalogoComponent {
     }
   ];
 
-  toggleFavorito(casa: Propiedad) {
-    this.favoritosService.toggleFavorito(casa);
-  }
-
-  esFavorito(id: number): boolean {
-    return this.favoritosService.esFavorito(id);
-  }
 }

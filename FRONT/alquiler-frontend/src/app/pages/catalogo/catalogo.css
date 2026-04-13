@@ -1,6 +1,6 @@
 /* Contenedor principal */
 .catalogo-container {
-    background-color: #121212; /* Fondo oscuro que enlaza con tu Login */
+    background-color: #121212; /* El fondo general oscuro */
     min-height: 100vh;
     padding: 2rem 5%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -30,7 +30,7 @@
    ========================================= */
 .propiedades-grid {
     display: grid;
-    /* La magia del Grid: se adapta solo sin necesidad de media queries complejas */
+    /* Esto hace que las columnas se adapten solas al tamaño de la pantalla */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2.5rem;
 }
@@ -39,7 +39,7 @@
    TARJETAS (Cards)
    ========================================= */
 .propiedad-card {
-    background-color: #1e1e1e; /* Color de las cartas de tu login */
+    background-color: #1e1e1e;
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -59,22 +59,22 @@
 .imagen-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 4/3; /* Mantiene la proporción de foto inmobiliaria */
+    aspect-ratio: 4/3; /* Proporción estándar de fotos de casas */
     overflow: hidden;
 }
 
 .imagen-container img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Evita que la foto se deforme */
     transition: transform 0.5s ease;
 }
 
 .propiedad-card:hover .imagen-container img {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Zoom suave al pasar el ratón */
 }
 
-/* Botón flotante de favoritos (Corazón) */
+/* Botón de favorito flotante */
 .favorito-btn {
     position: absolute;
     top: 15px;
@@ -89,76 +89,21 @@
     align-items: center;
     font-size: 1.2rem;
     cursor: pointer;
-    backdrop-filter: blur(4px); /* Efecto cristal Apple */
+    backdrop-filter: blur(4px);
     transition: all 0.2s;
 }
 
-.favorito-btn.activo {
-    color: #ff4b4b;
-    background: rgba(255, 75, 75, 0.2);
-}
-
 .favorito-btn:hover {
-    color: #ff4b4b; /* Rojo al hacer hover */
+    color: #ff4b4b;
     transform: scale(1.1);
 }
-/* =========================================
-   DISEÑO DEL ESTADO VACÍO (Empty State)
-   ========================================= */
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 4rem 2rem;
-    background-color: #1e1e1e;
-    border-radius: 16px;
-    border: 1px dashed #444;
-    margin-top: 2rem;
-}
 
-.empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.8;
-}
-
-.empty-state h3 {
-    font-size: 1.8rem;
-    color: #ffffff;
-    margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-    color: #a0a0a0;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-.btn-volver {
-    background-color: #ffffff;
-    color: #121212;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-volver:hover {
-    background-color: #a0a0a0;
-    transform: translateY(-2px);
-}
-
-/* Contenedor de textos dentro de la tarjeta */
+/* Información de la propiedad */
 .info-container {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; 
+    flex-grow: 1; /* Rellena el espacio si la tarjeta es muy alta */
 }
 
 .info-header {
@@ -178,7 +123,7 @@
 
 .valoracion {
     font-size: 0.95rem;
-    color: #ffd700; 
+    color: #ffd700; /* Estrella dorada */
     font-weight: bold;
     white-space: nowrap;
     margin-left: 10px;
@@ -190,12 +135,11 @@
     margin: 0 0 1.5rem 0;
 }
 
-/* Fila de precio y botón */
 .precio-reserva {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; 
+    margin-top: auto; /* Empuja esto siempre abajo del todo */
 }
 
 .precio {
@@ -230,7 +174,7 @@
 }
 
 /* =========================================
-   MÓVILES (Ajustes finos)
+   MÓVILES (Media Queries Adicionales)
    ========================================= */
 @media (max-width: 600px) {
     .catalogo-header h2 {
