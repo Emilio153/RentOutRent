@@ -1,0 +1,41 @@
+<div class="container admin-container">
+  
+  <div class="admin-header">
+    <div>
+      <h1 translate="no">Mis Propiedades</h1>
+      <p>Gestiona los alojamientos que tienes publicados</p>
+    </div>
+    <button class="btn-primary" routerLink="/crear-propiedad">+ Añadir Propiedad</button>
+  </div>
+
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="!cargando && propiedades.length === 0" class="empty-state glass-panel">
+    <div class="empty-icon">🏠</div>
+    <h3>Aún no tienes propiedades</h3>
+    <p>Publica tu primera casa y empieza a ganar dinero recibiendo huéspedes.</p>
+    <br>
+    <button class="btn-primary" routerLink="/crear-propiedad">Publicar ahora</button>
+  </div>
+
+  <div class="propiedades-list" *ngIf="!cargando && propiedades.length > 0">
+    <div class="propiedad-row glass-panel" *ngFor="let p of propiedades">
+      <div class="p-img">
+        <img [src]="p.imagenes?.length ? p.imagenes[0].url : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=200&q=80'">
+      </div>
+      <div class="p-info">
+        <h3 translate="no">{{ p.titulo }}</h3>
+        <p class="ubicacion">{{ p.direccion }}</p>
+        <p class="precio"><strong>{{ p.precio_noche }}€</strong> / noche</p>
+      </div>
+      <div class="p-actions">
+        <button class="btn-secondary" [routerLink]="['/propiedad', p.id]">Ver</button>
+        <!-- En un caso real habría routerLink a editar -->
+        <button class="btn-danger" (click)="borrarPropiedad(p.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</div>

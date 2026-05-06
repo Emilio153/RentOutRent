@@ -2,50 +2,28 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login';
 import { CatalogoComponent } from './pages/catalogo/catalogo';
 import { FavoritosComponent } from './shared/favoritos/favoritos';
+import { DetallePropiedadComponent } from './pages/detalle-propiedad/detalle-propiedad';
+import { RegistroComponent } from './pages/registro/registro';
+import { MisPropiedadesComponent } from './pages/mis-propiedades/mis-propiedades';
+import { CrearPropiedadComponent } from './pages/crear-propiedad/crear-propiedad';
+import { MisReservasComponent } from './pages/mis-reservas/mis-reservas';
+import { ChatReservaComponent } from './pages/chat-reserva/chat-reserva';
 
-// ==========================================
-// 2. CONFIGURACIÓN DEL MAPA DE RUTAS
-// ==========================================
 export const routes: Routes = [
+  // Públicas
+  { path: 'login', component: LoginComponent },
+  { path: 'registro', component: RegistroComponent },
+  { path: 'catalogo', component: CatalogoComponent },
+  { path: 'propiedad/:id', component: DetallePropiedadComponent },
 
-  // Pantalla de Autenticación
-  {
-    path: 'login',
-    component: LoginComponent
-  },
+  // Privadas (Podrían llevar un Guard, pero lo dejamos simple por ahora)
+  { path: 'favoritos', component: FavoritosComponent },
+  { path: 'mis-propiedades', component: MisPropiedadesComponent },
+  { path: 'crear-propiedad', component: CrearPropiedadComponent },
+  { path: 'mis-reservas', component: MisReservasComponent },
+  { path: 'chat/:id', component: ChatReservaComponent },
 
-  // Pantalla Principal del Catálogo
-  {
-    path: 'catalogo',
-    component: CatalogoComponent
-  },
-
-  // Pantalla de la lista de Favoritos guardados
-  {
-    path: 'favoritos',
-    component: FavoritosComponent
-  },
-
-  // (FUTURO) Pantalla de detalle de una casa al pulsar "Ver más"
-  // { 
-  //   path: 'propiedad/:id', 
-  //   component: DetallePropiedadComponent 
-  // },
-
-  // ==========================================
-  // REDIRECCIONES DE SEGURIDAD
-  // ==========================================
-
-  // Si alguien entra a la raíz vacía (http://localhost:4200/), lo mandamos al login
-  {
-    path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
-  },
-
-  // Si alguien escribe una ruta inventada (http://localhost:4200/patata), lo mandamos al login
-  {
-    path: '**',
-    redirectTo: '/login'
-  }
+  // Redirecciones
+  { path: '', redirectTo: '/catalogo', pathMatch: 'full' },
+  { path: '**', redirectTo: '/catalogo' }
 ];

@@ -1,60 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-// Definimos la estructura de una Casa/Propiedad
-export interface Propiedad {
-  id: number;
-  titulo: string;
-  ubicacion: string;
-  precioPorNoche: number;
-  imagenUrl: string;
-  valoracion: number;
-}
+import { FormsModule } from '@angular/forms';
+import { PropiedadesService, Propiedad } from '../../shared/services/propiedades.service';
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './catalogo.html',
   styleUrls: ['./catalogo.css']
 })
-export class CatalogoComponent {
+export class CatalogoComponent implements OnInit {
   
-  // Datos de prueba (Mock Data) para poder maquetar
-  propiedades: Propiedad[] = [
-    {
-      id: 1,
-      titulo: 'Villa de Lujo con Piscina Infinita',
-      ubicacion: 'Marbella, Málaga',
-      precioPorNoche: 350,
-      imagenUrl: 'https://images.unsplash.com/photo-1613490908592-15f736c0ce75?auto=format&fit=crop&w=800&q=80',
-      valoracion: 4.9
-    },
-    {
-      id: 2,
-      titulo: 'Ático Moderno en el Centro',
-      ubicacion: 'Madrid Capital',
-      precioPorNoche: 120,
-      imagenUrl: 'https://images.unsplash.com/photo-1502672260266-1c1de2d9d0d9?auto=format&fit=crop&w=800&q=80',
-      valoracion: 4.7
-    },
-    {
-      id: 3,
-      titulo: 'Cabaña Rústica en la Montaña',
-      ubicacion: 'Pirineos, Huesca',
-      precioPorNoche: 85,
-      imagenUrl: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80',
-      valoracion: 4.8
-    },
-    {
-      id: 4,
-      titulo: 'Casa Frente al Mar',
-      ubicacion: 'Ibiza, Baleares',
-      precioPorNoche: 450,
-      imagenUrl: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80',
-      valoracion: 5.0
-    }
-  ];
+  private propiedadesService = inject(PropiedadesService);
+  
+  propiedades: Propiedad[] = [];
+  terminoBusqueda: string = '';
+  cargando: boolean = true;
 
+  ngOnInit() {
+    this.cargarPropiedades();
+  }
+
+  cargarPropiedades() {
+    this.cargando = true;
+    this.propiedadesService.listarPropiedades().subscribe({
+      next: (data) => {
+        this.propiedades = data;
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar propiedades:', err);
+        this.cargando = false;
+      }
+    });
+  }
+
+  buscar() {
+    if (!this.terminoBusqueda.trim()) {
+      this.cargarPropiedades();
+      return;
+    }
+    this.cargando = true;
+    this.propiedadesService.buscarPropiedades(this.terminoBusqueda).subscribe({
+      next: (data) => {
+        this.propiedades = data;
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error en búsqueda:', err);
+        this.cargando = false;
+      }
+    });
+  }
+
+  getImagen(propiedad: Propiedad): string {
+    if (propiedad.imagenes && propiedad.imagenes.length > 0) {
+      return propiedad.imagenes[0].url;
+    }
+    // Imagen por defecto si no tiene ninguna
+    return 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80';
+  }
 }

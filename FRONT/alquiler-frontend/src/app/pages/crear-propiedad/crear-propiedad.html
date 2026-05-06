@@ -1,0 +1,68 @@
+<div class="container form-container">
+  
+  <div class="form-card glass-panel">
+    <div class="form-header">
+      <h2 translate="no">Publicar un alojamiento</h2>
+      <p>Rellena los datos para que los huéspedes puedan encontrarte</p>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert-danger">
+      {{ errorMensaje }}
+    </div>
+
+    <form (ngSubmit)="guardar()" #form="ngForm">
+      
+      <div class="form-group">
+        <label>Título del alojamiento</label>
+        <input type="text" class="form-control" name="titulo" [(ngModel)]="propiedad.titulo" required placeholder="Ej. Precioso apartamento en el centro">
+      </div>
+
+      <div class="form-group">
+        <label>Descripción detallada</label>
+        <textarea class="form-control" name="descripcion" [(ngModel)]="propiedad.descripcion" required rows="4" placeholder="Describe qué hace especial a tu alojamiento..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Dirección completa</label>
+        <input type="text" class="form-control" name="direccion" [(ngModel)]="propiedad.direccion" required placeholder="Calle, Número, Ciudad">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Precio por Noche (€)</label>
+          <input type="number" class="form-control" name="precio_noche" [(ngModel)]="propiedad.precio_noche" required min="1">
+        </div>
+        <div class="form-group">
+          <label>Huéspedes Máximos</label>
+          <input type="number" class="form-control" name="max_huespedes" [(ngModel)]="propiedad.max_huespedes" required min="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Disponibilidad desde</label>
+        <input type="date" class="form-control" name="calendario" [(ngModel)]="propiedad.calendario" required>
+      </div>
+
+      <hr class="divider">
+
+      <div class="form-group">
+        <label>Foto de portada (URL)</label>
+        <input type="text" class="form-control" name="imagenUrl" [(ngModel)]="imagenUrl" placeholder="https://images.unsplash.com/photo-...">
+        <p class="nota">Pega aquí el enlace a la imagen de tu casa. Usaremos Unsplash para el proyecto de clase.</p>
+        
+        <div class="img-preview" *ngIf="imagenUrl">
+          <img [src]="imagenUrl" alt="Previsualización">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-secondary" routerLink="/mis-propiedades">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="!form.valid || cargando">
+          {{ cargando ? 'Guardando...' : 'Publicar alojamiento' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

@@ -13,32 +13,63 @@ import { FavoritosService } from '../services/favoritos.service';
 })
 export class Navbar {
   private authService = inject(AuthService);
-  private router = inject(Router);
+  public router = inject(Router);
   estaLogueado: boolean = false;
   private favoritosService = inject(FavoritosService);
   cantidadFavoritos: number = 0;
 
+  irAExplorar() {
+    // Truco para forzar la recarga del componente si ya estamos en /catalogo
+    if (this.router.url === '/catalogo') {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/catalogo']);
+      });
+    } else {
+      this.router.navigate(['/catalogo']);
+    }
+  }
+
   constructor() {
-    // Escucha en tiempo real si el usuario entra o sale
     this.authService.isLoggedIn$.subscribe(status => {
       this.estaLogueado = status;
     });
-    // 🔥 Escuchamos en vivo cuántos favoritos hay
     this.favoritosService.favoritos$.subscribe(favs => {
       this.cantidadFavoritos = favs.length;
     });
   }
 
-  // Getter para sacar el rol del token
   get esPropietario(): boolean {
     const rol = this.authService.getRolUsuario();
-    // Aquí pon la palabra exacta que te salga en jwt.io. Normalmente es 'PROPIETARIO' o 'ROLE_PROPIETARIO'
-    return rol === 'PROPIETARIO';
+    return rol === 'PROPIETARIO' || rol === 'ROLE_PROPIETARIO';
   }
-  
+
+  ascenderAPropietario() {
+    // Usamos el token para extraer el email o se lo pedimos
+    // Asumiremos que authService tiene el email en el payload
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return;
+    try {
+      const payloadDecoded = atob(token.split('.')[1]);
+      const valores = JSON.parse(payloadDecoded);
+      const email = valores.sub || valores.email; // Depende del JWT de Spring
+      if (email) {
+        this.authService.ascenderAPropietario(email).subscribe({
+          next: () => {
+            alert('¡Enhorabuena! Ahora eres Propietario. Puedes publicar alojamientos.');
+            this.router.navigate(['/mis-propiedades']);
+          },
+          error: (err) => console.error(err)
+        });
+      } else {
+        alert('No se pudo encontrar el email en el token para ascender.');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   cerrarSesion() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/catalogo']);
   }
 }

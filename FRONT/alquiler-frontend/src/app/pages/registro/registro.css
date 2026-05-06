@@ -1,0 +1,140 @@
+.registro-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.15), transparent 50%);
+}
+
+.registro-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 3rem;
+  background: var(--bg-surface-glass);
+}
+
+.registro-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.registro-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, #fff, #a5b4fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.registro-header p {
+  color: var(--text-muted);
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  text-align: center;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+}
+
+.login-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Radio Cards (Role Selector) */
+.role-selector {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.role-selector label {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.radio-card {
+  flex: 1;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.radio-card input {
+  display: none;
+}
+
+.radio-card .icon {
+  font-size: 2.5rem;
+}
+
+.radio-card .text {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.radio-card:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.radio-card.active {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.radio-card.active .text {
+  color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .registro-card {
+    padding: 2rem 1.5rem;
+  }
+}
