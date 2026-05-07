@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Propiedad } from '../../pages/catalogo/catalogo';
+import { Propiedad } from './propiedad';
 
 @Injectable({
   providedIn: 'root'

@@ -1,17 +1,22 @@
 <main class="catalogo-container">
-  
   <header class="catalogo-header">
     <h2 translate="no" class="notranslate">Descubre tu próximo destino</h2>
     <p>Alojamientos excepcionales verificados por RentOutRent</p>
   </header>
 
-  <section class="propiedades-grid" aria-label="Lista de propiedades disponibles">
-    
+  <!-- Mensaje de carga mientras Spring Boot responde -->
+  <div *ngIf="cargando" class="loading-state" style="color: white; text-align: center; padding: 2rem;">
+    <h2>Cargando alojamientos reales... ⏳</h2>
+  </div>
+
+  <section *ngIf="!cargando" class="propiedades-grid" aria-label="Lista de propiedades disponibles">
+    <!-- Bucle con los datos reales -->
     <article class="propiedad-card" *ngFor="let casa of propiedades">
       
       <div class="imagen-container">
-        <img [src]="casa.imagenUrl" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
-        <div class="favorito-btn" aria-label="Añadir a favoritos">
+        <!-- Usamos el método auxiliar para sacar la primera imagen de la lista -->
+        <img [src]="getPrimeraImagen(casa)" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
+        <div class="favorito-btn" [class.activo]="esFavorito(casa.id)" (click)="toggleFavorito(casa)" aria-label="Añadir a favoritos">
           ♥
         </div>
       </div>
@@ -19,19 +24,19 @@
       <div class="info-container">
         <div class="info-header">
           <h3 class="titulo" translate="no">{{ casa.titulo }}</h3>
-          <span class="valoracion">★ {{ casa.valoracion }}</span>
+          <!-- Valoración de prueba (el backend no la tiene en Propiedad aún) -->
+          <span class="valoracion">★ 4.8</span>
         </div>
         
-        <p class="ubicacion">{{ casa.ubicacion }}</p>
+        <p class="ubicacion">{{ casa.direccion }}</p>
         
         <div class="precio-reserva">
-          <p class="precio"><strong>{{ casa.precioPorNoche }}€</strong> <span class="noche">/ noche</span></p>
+          <!-- Adaptado a la variable precio_noche del backend -->
+          <p class="precio"><strong>{{ casa.precio_noche }}€</strong> <span class="noche">/ noche</span></p>
           <button class="btn-reservar" [routerLink]="['/propiedad', casa.id]">Ver más</button>
         </div>
       </div>
 
     </article>
-
   </section>
-
 </main>
