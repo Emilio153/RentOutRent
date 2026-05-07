@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 // Imports arreglados:
 import { FavoritosService } from '../services/favoritos.service';
-import { Propiedad } from '../services/propiedad';
+import { Propiedad } from '../services/propiedades.service';
 
 @Component({
   selector: 'app-favoritos',

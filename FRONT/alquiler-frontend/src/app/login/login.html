@@ -1,77 +1,34 @@
-<main class="login-body" aria-label="Página de autenticación">
-  <div class="container" [class.right-panel-active]="isRightPanelActive">
-    
-    <section class="form-container sign-up-container" aria-labelledby="registro-titulo">
-      <form (submit)="onRegister()">
-        <h2 id="registro-titulo">Crear Cuenta</h2>
-        <p class="subtitle">Únete a RentOutRent</p>
+<div class="login-container">
+  <div class="login-card glass-panel">
+    <div class="login-header">
+      <h2 translate="no" class="notranslate">RentOutRent</h2>
+      <p>Introduce tus credenciales para continuar</p>
+    </div>
 
-        <div class="input-group">
-          <label for="reg-nombre" class="sr-only">Nombre completo</label>
-          <input id="reg-nombre" type="text" name="nombre" [(ngModel)]="registro.nombre" placeholder="Nombre completo" autocomplete="name" required>
-        </div>
-        <div class="input-group">
-          <label for="reg-email" class="sr-only">Correo electrónico</label>
-          <input id="reg-email" type="email" name="email" [(ngModel)]="registro.email" placeholder="Correo electrónico" autocomplete="email" required>
-        </div>
-        <div class="input-group">
-          <label for="reg-dni" class="sr-only">DNI o Pasaporte</label>
-          <input id="reg-dni" type="text" name="dni" [(ngModel)]="registro.dni" placeholder="DNI / Pasaporte" autocomplete="off" required>
-        </div>
-        <div class="input-group">
-          <label for="reg-tel" class="sr-only">Teléfono</label>
-          <input id="reg-tel" type="tel" name="telefono" [(ngModel)]="registro.telefono" placeholder="Teléfono" autocomplete="tel" required>
-        </div>
-        <div class="input-group">
-          <label for="reg-password" class="sr-only">Contraseña</label>
-          <input id="reg-password" type="password" name="password" [(ngModel)]="registro.password" placeholder="Contraseña" autocomplete="new-password" required>
-        </div>
-        <div class="input-group">
-          <label for="reg-confirm" class="sr-only">Confirmar contraseña</label>
-          <input id="reg-confirm" type="password" name="confirmPassword" [(ngModel)]="registro.confirmPassword" placeholder="Confirmar contraseña" autocomplete="new-password" required>
-        </div>
-        
-        <button type="submit" class="login-button">Registrarse</button>
-        
-        <button type="button" class="mobile-toggle toggle-btn-text" (click)="togglePanel()">¿Ya tienes cuenta? Iniciar Sesión</button>
-      </form>
-    </section>
+    <div *ngIf="errorMensaje" class="alert-danger">
+      {{ errorMensaje }}
+    </div>
 
-    <section class="form-container sign-in-container" aria-labelledby="login-titulo">
-      <form (submit)="onLogin()">
-        <h2 id="login-titulo" translate="no" class="notranslate">RentOutRent</h2>
-        <p class="subtitle">Introduce tus credenciales para continuar</p>
-        
-        <div class="input-group">
-          <label for="login-email" class="sr-only">Correo electrónico</label>
-          <input id="login-email" type="email" name="emailLogin" [(ngModel)]="emailLogin" placeholder="ejemplo@correo.com" autocomplete="email" required>
-        </div>
-        <div class="input-group">
-          <label for="login-password" class="sr-only">Contraseña</label>
-          <input id="login-password" type="password" name="passwordLogin" [(ngModel)]="passwordLogin" placeholder="********" autocomplete="current-password" required>
-        </div>
-        
-        <button type="submit" class="login-button">Iniciar Sesión en ROR</button>
-        
-        <button type="button" class="mobile-toggle toggle-btn-text" (click)="togglePanel()">¿Aún no te has Registrado?</button>
-      </form>
-    </section>
-
-    <aside class="overlay-container">
-      <div class="overlay">
-        <div class="overlay-panel overlay-left">
-          <h2>¡Bienvenido de nuevo!</h2>
-          <p>¿Ya tienes una cuenta en RentOutRent?</p>
-          <button type="button" class="ghost" (click)="togglePanel()" tabindex="-1">Iniciar Sesión</button>
-        </div>
-        
-        <div class="overlay-panel overlay-right">
-          <h2>¡Hola, Viajero!</h2>
-          <p>¿Aún no tienes cuenta? Únete a nosotros y descubre tu próximo destino.</p>
-          <button type="button" class="ghost" (click)="togglePanel()" tabindex="-1">Registrarse</button>
-        </div>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+      
+      <div class="form-group">
+        <label>Correo Electrónico</label>
+        <input type="email" class="form-control" name="emailLogin" [(ngModel)]="emailLogin" required placeholder="tu@email.com">
       </div>
-    </aside>
-    
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" class="form-control" name="passwordLogin" [(ngModel)]="passwordLogin" required placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="btn-primary btn-block" [disabled]="!loginForm.form.valid || cargando">
+        {{ cargando ? 'Iniciando...' : 'Iniciar Sesión' }}
+      </button>
+
+      <p class="register-link">
+        ¿Aún no tienes cuenta? <a routerLink="/registro">Regístrate aquí</a>
+      </p>
+
+    </form>
   </div>
-</main>
+</div>

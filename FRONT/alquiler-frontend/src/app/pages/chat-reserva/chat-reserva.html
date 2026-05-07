@@ -1,0 +1,45 @@
+<div class="container chat-container">
+  
+  <div class="chat-header">
+    <button class="btn-back" routerLink="/mis-reservas">← Volver</button>
+    <h2 translate="no">Chat de la Reserva #{{ reservaId }}</h2>
+  </div>
+
+  <div class="chat-card glass-panel">
+    
+    <div *ngIf="cargando" class="loading-state">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="chat-box" id="chat-box" *ngIf="!cargando">
+      
+      <div *ngIf="mensajes.length === 0" class="empty-chat">
+        <p>No hay mensajes todavía. ¡Escribe el primero!</p>
+      </div>
+
+      <div class="mensaje-row" *ngFor="let m of mensajes" [ngClass]="{'mio': m.emisor.id === miId, 'otro': m.emisor.id !== miId}">
+        <div class="mensaje-bubble">
+          <p class="contenido">{{ m.contenido }}</p>
+          <span class="hora">{{ m.fechaEnvio | date:'shortTime' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chat-input-area">
+      <form (ngSubmit)="enviar()">
+        <input 
+          type="text" 
+          [(ngModel)]="nuevoMensaje" 
+          name="mensaje" 
+          class="form-control" 
+          placeholder="Escribe un mensaje..."
+          autocomplete="off"
+        >
+        <button type="submit" class="btn-primary" [disabled]="!nuevoMensaje.trim() || cargando">Enviar</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>

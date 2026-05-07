@@ -1,22 +1,35 @@
 <main class="catalogo-container">
+  
   <header class="catalogo-header">
-    <h2 translate="no" class="notranslate">Descubre tu próximo destino</h2>
-    <p>Alojamientos excepcionales verificados por RentOutRent</p>
+    <div class="header-content">
+      <h2 translate="no" class="notranslate">Encuentra tu próximo hogar</h2>
+      <p>Alojamientos excepcionales para experiencias inolvidables.</p>
+      
+      <div class="search-bar">
+        <input 
+          type="text" 
+          [(ngModel)]="terminoBusqueda" 
+          (keyup.enter)="buscar()" 
+          placeholder="¿A dónde quieres ir? (Ej. Madrid, Playa...)"
+          class="search-input"
+        >
+        <button class="btn-primary btn-search" (click)="buscar()">Buscar</button>
+      </div>
+    </div>
   </header>
 
-  <!-- Mensaje de carga mientras Spring Boot responde -->
-  <div *ngIf="cargando" class="loading-state" style="color: white; text-align: center; padding: 2rem;">
-    <h2>Cargando alojamientos reales... ⏳</h2>
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando alojamientos mágicos...</p>
   </div>
 
-  <section *ngIf="!cargando" class="propiedades-grid" aria-label="Lista de propiedades disponibles">
-    <!-- Bucle con los datos reales -->
-    <article class="propiedad-card" *ngFor="let casa of propiedades">
+  <section *ngIf="!cargando && propiedades.length > 0" class="propiedades-grid" aria-label="Lista de propiedades disponibles">
+    
+    <article class="propiedad-card glass-panel" *ngFor="let casa of propiedades">
       
       <div class="imagen-container">
-        <!-- Usamos el método auxiliar para sacar la primera imagen de la lista -->
-        <img [src]="getPrimeraImagen(casa)" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
-        <div class="favorito-btn" [class.activo]="esFavorito(casa.id)" (click)="toggleFavorito(casa)" aria-label="Añadir a favoritos">
+        <img [src]="getImagen(casa)" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
+        <div class="favorito-btn" aria-label="Añadir a favoritos">
           ♥
         </div>
       </div>
@@ -24,19 +37,26 @@
       <div class="info-container">
         <div class="info-header">
           <h3 class="titulo" translate="no">{{ casa.titulo }}</h3>
-          <!-- Valoración de prueba (el backend no la tiene en Propiedad aún) -->
-          <span class="valoracion">★ 4.8</span>
+          <span class="valoracion">★ 4.9</span> <!-- Fake review for aesthetic -->
         </div>
         
         <p class="ubicacion">{{ casa.direccion }}</p>
         
         <div class="precio-reserva">
-          <!-- Adaptado a la variable precio_noche del backend -->
           <p class="precio"><strong>{{ casa.precio_noche }}€</strong> <span class="noche">/ noche</span></p>
-          <button class="btn-reservar" [routerLink]="['/propiedad', casa.id]">Ver más</button>
+          <button class="btn-secondary btn-reservar" [routerLink]="['/propiedad', casa.id]">Ver más</button>
         </div>
       </div>
 
     </article>
+
   </section>
+
+  <div *ngIf="!cargando && propiedades.length === 0" class="empty-state">
+    <div class="empty-icon">🏠</div>
+    <h3>No hemos encontrado nada</h3>
+    <p>Prueba buscando otra ubicación o eliminando los filtros.</p>
+    <button class="btn-secondary" (click)="terminoBusqueda=''; buscar()">Ver todo</button>
+  </div>
+
 </main>

@@ -1,0 +1,91 @@
+<div class="container detalle-container" *ngIf="cargando">
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando detalles...</p>
+  </div>
+</div>
+
+<div class="container detalle-container" *ngIf="!cargando && propiedad">
+  
+  <header class="detalle-header">
+    <h1 translate="no">{{ propiedad.titulo }}</h1>
+    <p class="ubicacion">📍 {{ propiedad.direccion }}</p>
+  </header>
+
+  <div class="galeria">
+    <!-- Mostrar la primera imagen como principal, si hay -->
+    <div class="img-principal">
+      <img [src]="propiedad.imagenes && propiedad.imagenes.length > 0 ? propiedad.imagenes[0].url : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'" alt="Imagen principal">
+    </div>
+    
+    <!-- Mostrar las siguientes hasta 2 como secundarias -->
+    <div class="imgs-secundarias" *ngIf="propiedad.imagenes && propiedad.imagenes.length > 1">
+      <img *ngFor="let img of propiedad.imagenes | slice:1:3" [src]="img.url" alt="Imagen secundaria">
+    </div>
+  </div>
+
+  <div class="detalle-content">
+    
+    <div class="info-principal">
+      <div class="glass-panel panel-info">
+        <h3>Acerca de este espacio</h3>
+        <p class="descripcion">{{ propiedad.descripcion }}</p>
+        
+        <div class="amenities">
+          <div class="amenity">
+            <span>👥</span>
+            <span>Hasta {{ propiedad.max_huespedes }} huéspedes</span>
+          </div>
+          <div class="amenity">
+            <span>🏠</span>
+            <span>Alojamiento entero</span>
+          </div>
+          <div class="amenity">
+            <span>✨</span>
+            <span>Limpieza premium</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="reserva-card glass-panel">
+        <div class="precio-header">
+          <h2>{{ propiedad.precio_noche }}€</h2>
+          <span>/ noche</span>
+        </div>
+
+        <div class="reserva-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Llegada</label>
+              <input type="date" class="form-control" [(ngModel)]="fechaInicio" (change)="calcularTotal()">
+            </div>
+            <div class="form-group">
+              <label>Salida</label>
+              <input type="date" class="form-control" [(ngModel)]="fechaFin" (change)="calcularTotal()">
+            </div>
+          </div>
+
+          <div class="reserva-total" *ngIf="calcularTotal() > 0">
+            <span>Total calculado:</span>
+            <strong>{{ calcularTotal() }}€</strong>
+          </div>
+
+          <div *ngIf="mensajeReserva" class="alert-danger">
+            {{ mensajeReserva }}
+          </div>
+
+          <button class="btn-primary btn-block" (click)="reservar()" [disabled]="cargandoReserva">
+            <span *ngIf="isLoggedIn">{{ cargandoReserva ? 'Procesando...' : 'Reservar ahora' }}</span>
+            <span *ngIf="!isLoggedIn">Inicia sesión para reservar</span>
+          </button>
+          
+          <p class="nota">No se te cobrará nada aún.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

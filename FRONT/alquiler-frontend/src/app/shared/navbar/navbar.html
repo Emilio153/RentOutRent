@@ -1,19 +1,38 @@
-<nav class="navbar">
-  <div class="nav-brand">
-    <h1 translate="no" class="notranslate">RentOutRent</h1>
+<nav class="navbar glass-panel">
+  <div class="nav-brand" routerLink="/catalogo">
+    <span class="logo-icon">✨</span>
+    <span class="brand-text">RentOutRent</span>
   </div>
 
-  <div class="nav-links" *ngIf="estaLogueado">
-    <a routerLink="/catalogo" class="nav-item">Explorar</a>
+  <div class="nav-links">
+    <a (click)="irAExplorar()" [class.active]="router.url === '/catalogo'" class="nav-item" style="cursor: pointer;">Explorar</a>
     
-    <a *ngIf="esPropietario" routerLink="/crear-propiedad" class="nav-item btn-propietario">
-      + Añadir Propiedad
-    </a>
+    <ng-container *ngIf="estaLogueado">
+      <a routerLink="/favoritos" routerLinkActive="active" class="nav-item">
+        Favoritos <span class="badge-count" *ngIf="cantidadFavoritos > 0">{{ cantidadFavoritos }}</span>
+      </a>
+      
+      <a routerLink="/mis-reservas" routerLinkActive="active" class="nav-item">
+        {{ esPropietario ? 'Reservas Recibidas' : 'Mis Viajes' }}
+      </a>
 
-    <a routerLink="/mis-reservas" class="nav-item">Mis Reservas</a>
-    <a routerLink="/favoritos" class="nav-link" *ngIf="cantidadFavoritos > 0">
-       ❤️ Favoritos <span class="badge">{{ cantidadFavoritos }}</span>
-    </a>
-    <button (click)="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
+      <a *ngIf="esPropietario" routerLink="/mis-propiedades" routerLinkActive="active" class="nav-item">
+        Mis Propiedades
+      </a>
+    </ng-container>
+  </div>
+
+  <div class="nav-auth">
+    <ng-container *ngIf="!estaLogueado">
+      <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
+      <button class="btn-primary" routerLink="/registro">Regístrate</button>
+    </ng-container>
+    
+    <ng-container *ngIf="estaLogueado">
+      <button *ngIf="!esPropietario" class="btn-secondary btn-ascender" (click)="ascenderAPropietario()">
+        Convertirse en Propietario
+      </button>
+      <button class="btn-danger" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </ng-container>
   </div>
 </nav>

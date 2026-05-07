@@ -1,7 +1,1 @@
-/* Asegura que la página ocupe toda la pantalla y el contenido fluya bajo el navbar */
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  background-color: #121212; /* Evita destellos blancos al cambiar de página */
-}
+/* Limpiado para usar styles.css globalmente */
