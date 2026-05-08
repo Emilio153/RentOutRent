@@ -1,0 +1,70 @@
+{
+  "info": {
+    "_postman_id": "9e6c2f01-8c9a-4d5c-b123-abc123456789",
+    "name": "Propiedades API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar propiedades",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/propiedades",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["propiedades"]
+        }
+      }
+    },
+    {
+      "name": "Crear propiedad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Apartamento céntrico\",\n  \"descripcion\": \"Apartamento reformado y luminoso\",\n  \"direccion\": \"Calle Mayor 15\",\n  \"precio_noche\": 85.5,\n  \"max_huespedes\": 4,\n  \"calendario\": \"2026-02-15\",\n  \"propietario\": {\n    \"id\": 1\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/propiedades",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["propiedades"]
+        }
+      }
+    },
+    {
+      "name": "Obtener propiedad por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/propiedades/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["propiedades", "1"]
+        }
+      }
+    }
+  ]
+}
