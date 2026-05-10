@@ -5,12 +5,14 @@
   </div>
 
   <div class="nav-links">
-    <a (click)="irAExplorar()" [class.active]="router.url === '/catalogo'" class="nav-item" style="cursor: pointer;">Explorar</a>
+    <a routerLink="/catalogo" routerLinkActive="active" class="nav-item" style="cursor: pointer;">
+      Explorar
+    </a>
     
     <ng-container *ngIf="estaLogueado">
-      <a routerLink="/favoritos" routerLinkActive="active" class="nav-item">
-        Favoritos <span class="badge-count" *ngIf="cantidadFavoritos > 0">{{ cantidadFavoritos }}</span>
-      </a>
+      <a *ngIf="!esPropietario" routerLink="/favoritos" routerLinkActive="active" class="nav-item">
+  Favoritos <span class="badge-count" *ngIf="cantidadFavoritos > 0">{{ cantidadFavoritos }}</span>
+</a>
       
       <a routerLink="/mis-reservas" routerLinkActive="active" class="nav-item">
         {{ esPropietario ? 'Reservas Recibidas' : 'Mis Viajes' }}
@@ -25,14 +27,15 @@
   <div class="nav-auth">
     <ng-container *ngIf="!estaLogueado">
       <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
-      <button class="btn-primary" routerLink="/registro">Regístrate</button>
+      <button type="button" class="btn-primary" routerLink="/registro">Regístrate</button>
     </ng-container>
     
     <ng-container *ngIf="estaLogueado">
-      <button *ngIf="!esPropietario" class="btn-secondary btn-ascender" (click)="ascenderAPropietario()">
-        Convertirse en Propietario
+      <button type="button" class="btn-secondary btn-ascender" (click)="cambiarRol()">
+        {{ esPropietario ? '👤 Cambiar a Huésped' : '🔑 Modo Anfitrión' }}
       </button>
-      <button class="btn-danger" (click)="cerrarSesion()">Cerrar Sesión</button>
+      
+      <button type="button" class="btn-danger" (click)="cerrarSesion()">Cerrar Sesión</button>
     </ng-container>
   </div>
 </nav>

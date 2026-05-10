@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PropiedadesService, Propiedad } from '../../shared/services/propiedades.service';
+import { FavoritosService } from '../../shared/services/favoritos.service';
 
 @Component({
   selector: 'app-catalogo',
@@ -12,7 +13,7 @@ import { PropiedadesService, Propiedad } from '../../shared/services/propiedades
   styleUrls: ['./catalogo.css']
 })
 export class CatalogoComponent implements OnInit {
-  
+  private favoritosService = inject(FavoritosService);
   private propiedadesService = inject(PropiedadesService);
   
   propiedades: Propiedad[] = [];
@@ -54,7 +55,7 @@ export class CatalogoComponent implements OnInit {
       }
     });
   }
-
+  
   getImagen(propiedad: Propiedad): string {
     if (propiedad.imagenes && propiedad.imagenes.length > 0) {
       return propiedad.imagenes[0].url;
@@ -62,4 +63,13 @@ export class CatalogoComponent implements OnInit {
     // Imagen por defecto si no tiene ninguna
     return 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80';
   }
+  toggleFavorito(casa: Propiedad, event: Event) {
+    event.stopPropagation(); // Evita que se abra la tarjeta entera al darle al corazón
+    this.favoritosService.toggleFavorito(casa);
+  }
+
+  esFavorito(id: number): boolean {
+    return this.favoritosService.esFavorito(id);
+  }
+
 }

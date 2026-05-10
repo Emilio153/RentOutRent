@@ -17,6 +17,7 @@ export class Navbar {
   estaLogueado: boolean = false;
   private favoritosService = inject(FavoritosService);
   cantidadFavoritos: number = 0;
+  esPropietario = false;
 
   irAExplorar() {
     // Truco para forzar la recarga del componente si ya estamos en /catalogo
@@ -38,38 +39,57 @@ export class Navbar {
     });
   }
 
-  get esPropietario(): boolean {
-    const rol = this.authService.getRolUsuario();
-    return rol === 'PROPIETARIO' || rol === 'ROLE_PROPIETARIO';
-  }
+  // get esPropietario(): boolean {
+  //   const rol = this.authService.getRolUsuario();
+  //   return rol === 'PROPIETARIO' || rol === 'ROLE_PROPIETARIO';
+  // }
 
-  ascenderAPropietario() {
-    // Usamos el token para extraer el email o se lo pedimos
-    // Asumiremos que authService tiene el email en el payload
-    const token = localStorage.getItem('jwt_token');
-    if (!token) return;
-    try {
-      const payloadDecoded = atob(token.split('.')[1]);
-      const valores = JSON.parse(payloadDecoded);
-      const email = valores.sub || valores.email; // Depende del JWT de Spring
-      if (email) {
-        this.authService.ascenderAPropietario(email).subscribe({
-          next: () => {
-            alert('¡Enhorabuena! Ahora eres Propietario. Puedes publicar alojamientos.');
-            this.router.navigate(['/mis-propiedades']);
-          },
-          error: (err) => console.error(err)
-        });
-      } else {
-        alert('No se pudo encontrar el email en el token para ascender.');
-      }
-    } catch (e) {
-      console.error(e);
+  // ascenderAPropietario() {
+  //   // Usamos el token para extraer el email o se lo pedimos
+  //   // Asumiremos que authService tiene el email en el payload
+  //   const token = localStorage.getItem('jwt_token');
+  //   if (!token) return;
+  //   try {
+  //     const payloadDecoded = atob(token.split('.')[1]);
+  //     const valores = JSON.parse(payloadDecoded);
+  //     const email = valores.sub || valores.email; // Depende del JWT de Spring
+  //     if (email) {
+  //       this.authService.ascenderAPropietario(email).subscribe({
+  //         next: () => {
+  //           alert('¡Enhorabuena! Ahora eres Propietario. Puedes publicar alojamientos.');
+  //           this.router.navigate(['/mis-propiedades']);
+  //         },
+  //         error: (err) => console.error(err)
+  //       });
+  //     } else {
+  //       alert('No se pudo encontrar el email en el token para ascender.');
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }
+cambiarRol() {
+    // Invertimos el valor (Si es true pasa a false, si es false pasa a true)
+    this.esPropietario = !this.esPropietario;
+    
+    // (Opcional) Si quieres que cambie de ruta al instante para que vea el efecto:
+    if (this.esPropietario) {
+      this.router.navigate(['/mis-propiedades']);
+    } else {
+      this.router.navigate(['/catalogo']);
     }
   }
 
+
   cerrarSesion() {
-    this.authService.logout();
-    this.router.navigate(['/catalogo']);
+    // 1. Limpiamos los favoritos para que el próximo que entre no los vea
+    this.favoritosService.limpiarFavoritos();
+    
+    // 2. Tu código actual para cerrar sesión
+    // (borrar tokens, cambiar estaLogueado a false, etc.)
+    this.estaLogueado = false;
+    
+    // 3. Lo mandamos al login
+    this.router.navigate(['/login']);
   }
 }

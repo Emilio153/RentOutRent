@@ -28,8 +28,25 @@
   font-weight: 800;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
+}
+.btn-rol {
+  background-color: transparent;
+  border: 1px solid #ff4b4b;
+  color: #ff4b4b;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  margin-right: 15px;
+}
+
+.btn-rol:hover {
+  background-color: #ff4b4b;
+  color: white;
 }
 
 .nav-links {

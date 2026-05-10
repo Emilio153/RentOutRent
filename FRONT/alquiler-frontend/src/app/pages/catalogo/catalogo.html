@@ -29,7 +29,10 @@
       
       <div class="imagen-container">
         <img [src]="getImagen(casa)" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
-        <div class="favorito-btn" aria-label="Añadir a favoritos">
+        <div class="favorito-btn" 
+            [class.activo]="esFavorito(casa.id!)" 
+            (click)="toggleFavorito(casa, $event)" 
+            aria-label="Añadir a favoritos">
           ♥
         </div>
       </div>

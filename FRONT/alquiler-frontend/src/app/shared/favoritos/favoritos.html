@@ -1,0 +1,46 @@
+<main class="favoritos-container">
+  <header class="favoritos-header">
+    <h2>Mis Favoritos ❤️</h2>
+    <p>Tus alojamientos guardados para tu próxima aventura.</p>
+  </header>
+
+  <div class="empty-state" *ngIf="misFavoritos.length === 0">
+    <div class="empty-icon">💔</div>
+    <h3>Aún no tienes favoritos</h3>
+    <p>Parece que tu lista de deseos está vacía. ¡Descubre lugares increíbles!</p>
+    <button type="button" class="btn-explorar" routerLink="/catalogo">
+      Explorar Catálogo
+    </button>
+  </div>
+
+  <section class="propiedades-grid" *ngIf="misFavoritos.length > 0">
+    <article class="propiedad-card" *ngFor="let casa of misFavoritos">
+      
+      <div class="imagen-container">
+        <img 
+          [src]="casa.imagenes && casa.imagenes.length > 0 ? casa.imagenes[0].url : 'https://images.unsplash.com/photo-1518780602344-9f58cdceb3e5?auto=format&fit=crop&w=800&q=80'" 
+          [alt]="'Imagen de ' + casa.titulo" 
+          loading="lazy">
+        
+        <button type="button" class="favorito-btn activo" (click)="quitarFavorito(casa)" aria-label="Quitar de favoritos" title="Quitar de la lista">
+          ❤️
+        </button>
+      </div>
+
+      <div class="info-container">
+        <h3 class="titulo" translate="no">{{ casa.titulo }}</h3>
+        <p class="ubicacion">
+          <span class="pin-icon">📍</span> {{ casa.direccion }}
+        </p>
+        
+        <div class="precio-reserva">
+          <p class="precio"><strong>{{ casa.precio_noche }}€</strong> <span class="noche">/ noche</span></p>
+          <button type="button" class="btn-reservar" [routerLink]="['/propiedad', casa.id]">
+            Ver detalles
+          </button>
+        </div>
+      </div>
+
+    </article>
+  </section>
+</main>
