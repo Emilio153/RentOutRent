@@ -1,5 +1,7 @@
 package com.daw.alquiler.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,7 @@ public class ImagenPropiedad {
     private String url;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "propiedad_id")
     private Propiedad propiedad;
 }

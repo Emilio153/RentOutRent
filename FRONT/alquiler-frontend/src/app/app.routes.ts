@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login';
 import { CatalogoComponent } from './pages/catalogo/catalogo';
 import { FavoritosComponent } from './shared/favoritos/favoritos';
-import { DetallePropiedadComponent } from './pages/detalle-propiedad/detalle-propiedad';
+import { DetallePropiedadComponent } from './pages/detalle-propiedad/detalle-propiedad'; // 🔥 Solo importamos uno
 import { RegistroComponent } from './pages/registro/registro';
 import { MisPropiedadesComponent } from './pages/mis-propiedades/mis-propiedades';
 import { CrearPropiedadComponent } from './pages/crear-propiedad/crear-propiedad';
@@ -14,9 +14,12 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'catalogo', component: CatalogoComponent },
-  { path: 'propiedad/:id', component: DetallePropiedadComponent },
-
-  // Privadas (Podrían llevar un Guard, pero lo dejamos simple por ahora)
+  
+  // 🔥 LA RUTA ARREGLADA
+  // El navegador mostrará "localhost:4200/propiedad/3" y cargará tu DetallePropiedadComponent
+  { path: 'propiedad/:id', component: DetallePropiedadComponent }, 
+  
+  // Privadas
   { path: 'favoritos', component: FavoritosComponent },
   { path: 'mis-propiedades', component: MisPropiedadesComponent },
   { path: 'crear-propiedad', component: CrearPropiedadComponent },

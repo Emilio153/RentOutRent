@@ -48,7 +48,7 @@ public class SecurityConfig {
 					// Dejamos que cualquiera pueda ver las propiedades disponibles
 					.requestMatchers(HttpMethod.GET, "/api/propiedades").permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/propiedades/buscar").permitAll()
-					
+					.requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll()
 					// --- RUTAS PRIVADAS (Necesitan Token JWT) ---
 					
 					.anyRequest().authenticated()

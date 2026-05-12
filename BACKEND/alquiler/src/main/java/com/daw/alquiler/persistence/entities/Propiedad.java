@@ -1,6 +1,8 @@
 package com.daw.alquiler.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +36,8 @@ public class Propiedad {
     @JoinColumn(name = "propietario_id")
     private Propietario propietario;
 
-    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<ImagenPropiedad> imagenes;
 
     @OneToMany(mappedBy = "propiedad")

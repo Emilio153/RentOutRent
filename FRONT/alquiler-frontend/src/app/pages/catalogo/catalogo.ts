@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { FavoritosService } from '../../shared/services/favoritos.service';
 export class CatalogoComponent implements OnInit {
   private favoritosService = inject(FavoritosService);
   private propiedadesService = inject(PropiedadesService);
-  
+  private cdr = inject(ChangeDetectorRef);
   propiedades: Propiedad[] = [];
   terminoBusqueda: string = '';
   cargando: boolean = true;
@@ -30,10 +30,12 @@ export class CatalogoComponent implements OnInit {
       next: (data) => {
         this.propiedades = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar propiedades:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -48,10 +50,12 @@ export class CatalogoComponent implements OnInit {
       next: (data) => {
         this.propiedades = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error en búsqueda:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

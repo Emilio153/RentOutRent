@@ -1,118 +1,51 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PropiedadesService, Propiedad } from '../../shared/services/propiedades.service';
-import { ReservasService, Reserva } from '../../shared/services/reservas.service';
-import { AuthService } from '../../auth';
-import { UsuariosService } from '../../shared/services/usuarios.service';
 
 @Component({
-  selector: 'app-detalle-propiedad',
+  selector: 'app-propiedad-detalle',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './detalle-propiedad.html',
   styleUrls: ['./detalle-propiedad.css']
 })
 export class DetallePropiedadComponent implements OnInit {
+  // Inyectamos ActivatedRoute para poder leer el ID de la URL
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private propiedadesService = inject(PropiedadesService);
-  private reservasService = inject(ReservasService);
-  private authService = inject(AuthService);
-  private usuariosService = inject(UsuariosService);
-
+  private cdr = inject(ChangeDetectorRef)
   propiedad: Propiedad | null = null;
-  cargando = true;
-
-  // Formulario de reserva
-  fechaInicio: string = '';
-  fechaFin: string = '';
-  cargandoReserva = false;
-  mensajeReserva = '';
+  cargando: boolean = true;
+  error: boolean = false;
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+    // 1. Extraemos el ID de la ruta (ej: /propiedad/3 -> sacamos el 3)
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : null;
+
+    // 2. Si hay ID, llamamos a tu Spring Boot
     if (id) {
-      this.cargarPropiedad(Number(id));
+      this.cargarDetalles(id);
+    } else {
+      this.error = true;
+      this.cargando = false;
     }
   }
 
-  cargarPropiedad(id: number) {
-    this.propiedadesService.obtenerPropiedadPorId(id).subscribe({
+  cargarDetalles(id: number) {
+    // Asegúrate de tener este método getPropiedadById(id) creado en tu servicio
+    this.propiedadesService.getPropiedadById(id).subscribe({
       next: (data) => {
         this.propiedad = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar la propiedad', err);
+        console.error('Error al cargar la propiedad:', err);
+        this.error = true;
         this.cargando = false;
-      }
-    });
-  }
-
-  get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  calcularTotal(): number {
-    if (!this.fechaInicio || !this.fechaFin || !this.propiedad) return 0;
-    
-    const inicio = new Date(this.fechaInicio);
-    const fin = new Date(this.fechaFin);
-    
-    if (fin <= inicio) return 0;
-
-    const diffTime = Math.abs(fin.getTime() - inicio.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    return diffDays * this.propiedad.precio_noche;
-  }
-
-  reservar() {
-    if (!this.isLoggedIn) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    if (!this.fechaInicio || !this.fechaFin) {
-      this.mensajeReserva = 'Por favor, selecciona las fechas.';
-      return;
-    }
-
-    const total = this.calcularTotal();
-    if (total <= 0) {
-      this.mensajeReserva = 'Fechas inválidas.';
-      return;
-    }
-
-    const huespedId = this.usuariosService.obtenerMiIdDesdeToken();
-    if (!huespedId) {
-      this.mensajeReserva = 'Error: no se pudo obtener tu ID de usuario.';
-      return;
-    }
-
-    const nuevaReserva: Reserva = {
-      fecha_inicio: this.fechaInicio,
-      fecha_fin: this.fechaFin,
-      total: total,
-      estado: 'PENDIENTE',
-      propiedad: { id: this.propiedad!.id },
-      huesped: { id: huespedId }
-    };
-
-    this.cargandoReserva = true;
-    this.mensajeReserva = '';
-
-    this.reservasService.crearReserva(nuevaReserva).subscribe({
-      next: () => {
-        this.cargandoReserva = false;
-        alert('Reserva solicitada con éxito. El propietario debe confirmarla.');
-        this.router.navigate(['/mis-reservas']);
-      },
-      error: (err) => {
-        this.cargandoReserva = false;
-        this.mensajeReserva = 'Error al crear la reserva.';
-        console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }
