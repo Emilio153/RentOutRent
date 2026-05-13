@@ -26,11 +26,6 @@ export class PropiedadesService {
     return this.http.get<Propiedad[]>(`${this.apiUrl}/propiedades`);
   }
   getPropiedadById(id: number): Observable<Propiedad> {
-    // Llama a tu endpoint de Spring Boot, ej: http://localhost:8092/api/propiedades/3
-    return this.http.get<Propiedad>(`${this.apiUrl}/${id}`);
-  }
-
-  obtenerPropiedadPorId(id: number): Observable<Propiedad> {
     return this.http.get<Propiedad>(`${this.apiUrl}/propiedades/${id}`);
   }
 

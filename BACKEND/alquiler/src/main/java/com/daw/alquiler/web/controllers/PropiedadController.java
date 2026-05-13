@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @RestController
@@ -27,16 +27,32 @@ public class PropiedadController {
         return ResponseEntity.ok(propiedadService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable int id) {
-        try {
-            Propiedad propiedad = propiedadService.findById(id);
-            return ResponseEntity.ok(propiedad);
-        } catch (PropiedadNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
-        }
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> obtenerPorId(@PathVariable int id) {
+//        try {
+//            Propiedad propiedad = propiedadService.findById(id);
+//            return ResponseEntity.ok(propiedad);
+//        } catch (PropiedadNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+//        }
+//    }
 
+ // 🔥 NUEVO MÉTODO ADAPTADO a tu repositorio: Buscar una casa por su ID
+ 	@GetMapping("/{id}")
+ 	public ResponseEntity<Propiedad> obtenerPorId(@PathVariable int id) {
+ 		
+ 		// 1. Buscamos la propiedad directamente
+ 		Propiedad propiedad = propiedadService.findById(id);
+ 		
+ 		// 2. Si existe (no es null), devolvemos un 200 OK con los datos
+ 		if (propiedad != null) {
+ 			return ResponseEntity.ok(propiedad);
+ 		} 
+ 		// 3. Si es null, devolvemos un 404 Not Found
+ 		else {
+ 			return ResponseEntity.notFound().build();
+ 		}
+ 	}
     @GetMapping("/buscar")
     public ResponseEntity<List<Propiedad>> buscar(@RequestParam(name = "termino") String terminoBusqueda) {
         // Llama a tu método personalizado que busca por título o dirección

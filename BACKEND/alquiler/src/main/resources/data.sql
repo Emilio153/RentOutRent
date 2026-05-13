@@ -42,7 +42,9 @@ INSERT INTO propiedad (id, titulo, descripcion, direccion, precio_noche, max_hue
 -- 4. IMÁGENES (3 por propiedad = 45 imágenes)
 INSERT INTO imagen_propiedad (url, propiedad_id) VALUES
 ('https://images.unsplash.com/photo-1493809842364-78817add7ffb', 1), ('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688', 1), ('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267', 1),
-('https://images.unsplash.com/photo-1449156493391-d2cfa28e468b', 2), ('https://images.unsplash.com/photo-1470770841072-f978cf4d019e', 2), ('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b', 2),
+('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9', 2), 
+('https://images.unsplash.com/photo-1600607687920-4e20d33f4124', 2), 
+('https://images.unsplash.com/photo-1600566753190-17326c08403a', 2),
 ('https://images.unsplash.com/photo-1536376074432-bc1dafa42427', 3), ('https://images.unsplash.com/photo-1554995207-c18c203602cb', 3), ('https://images.unsplash.com/photo-1560448204-61dc36dc98c8', 3),
 ('https://images.unsplash.com/photo-1613490493576-2f045b1a0677', 4), ('https://images.unsplash.com/photo-1580587771525-78b9dba3b914', 4), ('https://images.unsplash.com/photo-1512917774080-9991f1c4c750', 4),
 ('https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6', 5), ('https://images.unsplash.com/photo-1484154218962-a197022b5858', 5), ('https://images.unsplash.com/photo-1524758631624-e2822e304c36', 5),

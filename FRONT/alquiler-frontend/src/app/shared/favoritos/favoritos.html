@@ -34,7 +34,7 @@
         </p>
         
         <div class="precio-reserva">
-          <p class="precio"><strong>{{ casa.precio_noche }}€</strong> <span class="noche">/ noche</span></p>
+          <p class="precio"><strong>{{ casa.precio_noche | number:'1.2-2'}}€</strong> <span class="noche">/ noche</span></p>
           <button type="button" class="btn-reservar" [routerLink]="['/propiedad', casa.id]">
             Ver detalles
           </button>

@@ -18,48 +18,58 @@
 }
 
 /* Galería CSS Grid */
+/* =========================================
+   Galería CSS Grid (AJUSTADA)
+   ========================================= */
 .galeria {
   display: grid;
-  grid-template-columns: 2fr 1fr;
   gap: 1rem;
-  height: 500px;
-  border-radius: 20px;
-  overflow: hidden;
+  height: 450px; /* Un tamaño perfecto para la mayoría de pantallas */
   margin-bottom: 3rem;
 }
 
 .img-principal {
   width: 100%;
   height: 100%;
+  border-radius: 20px; /* Movemos el borde aquí */
+  overflow: hidden; /* Evita que la foto se salga al hacer zoom */
+  min-height: 0; /* TRUCO: Fuerza a respetar la cuadrícula */
 }
 
 .img-principal img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Recorta la imagen a la perfección sin deformarla */
+  display: block; /* Quita márgenes fantasma */
   transition: transform 0.5s ease;
 }
 
 .img-principal:hover img {
-  transform: scale(1.02);
+  transform: scale(1.05); /* Efecto zoom suave */
 }
 
 .imgs-secundarias {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr; /* Divide el espacio exactamente por la mitad */
   gap: 1rem;
+  height: 100%;
+  min-height: 0; /* TRUCO: Fuerza a respetar la cuadrícula */
 }
 
 .imgs-secundarias img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  border-radius: 20px; /* Redondeamos las fotos secundarias también */
   transition: transform 0.5s ease;
+  min-height: 0; /* TRUCO: Mantiene la imagen en su caja */
 }
 
 .imgs-secundarias img:hover {
   transform: scale(1.05);
 }
+
 
 /* Layout del Contenido */
 .detalle-content {
@@ -153,10 +163,31 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.btn-block {
+.btn-block{
   width: 100%;
   padding: 15px;
   font-size: 1.1rem;
+}
+
+.btn-volver{
+ background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid var(--border-color);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: var(--glass-blur);
+  display: inline-block;
+  text-align: center;
+}
+.btn-volver:hover {
+  transform: translateY(-10px);
+  background: var(--primary);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
+
 }
 
 .nota {
@@ -175,12 +206,13 @@
 
 @media (max-width: 900px) {
   .galeria {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important; /* Fuerza 1 columna en móviles */
     height: 300px;
   }
   .imgs-secundarias {
-    display: none;
+    display: none; /* Oculta las secundarias en móviles para ahorrar espacio */
   }
+
   .detalle-content {
     grid-template-columns: 1fr;
   }
