@@ -80,7 +80,7 @@ public String register(RegisterRequest request) {
             nuevoUsuario = new com.daw.alquiler.persistence.entities.Huesped();
             
             // 🔥 LÍNEA AÑADIDA: Rellenamos la columna tipo_usuario
-            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.HUESPED);
+            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.PROPIETARIO);
         }
         
         // Mapeamos todos los campos de tu DTO
