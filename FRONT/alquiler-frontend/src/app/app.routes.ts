@@ -25,7 +25,7 @@ export const routes: Routes = [
   { path: 'crear-propiedad', component: CrearPropiedadComponent },
   { path: 'mis-reservas', component: MisReservasComponent },
   { path: 'chat/:id', component: ChatReservaComponent },
-
+  { path: 'editar-propiedad/:id', component: CrearPropiedadComponent },
   // Redirecciones
   { path: '', redirectTo: '/catalogo', pathMatch: 'full' },
   { path: '**', redirectTo: '/catalogo' }

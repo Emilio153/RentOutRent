@@ -1,8 +1,17 @@
 <div class="container reservas-container">
   
   <div class="reservas-header">
-    <h1 translate="no">{{ esPropietario ? 'Reservas Recibidas' : 'Mis Viajes' }}</h1>
-    <p>{{ esPropietario ? 'Gestiona las solicitudes de tus huéspedes' : 'Consulta el estado de tus reservas' }}</p>
+    <h1 translate="no">{{ viendoRecibidas ? 'Reservas Recibidas' : 'Mis Viajes' }}</h1>
+    <p>{{ viendoRecibidas ? 'Gestiona las solicitudes de tus huéspedes' : 'Consulta el estado de tus reservas' }}</p>
+    
+    <div class="tabs-container" *ngIf="esPropietarioReal">
+      <button class="tab-btn" [class.active]="!viendoRecibidas" (click)="setVista(false)">
+        🧳 Mis Viajes
+      </button>
+      <button class="tab-btn" [class.active]="viendoRecibidas" (click)="setVista(true)">
+        🏠 Reservas Recibidas
+      </button>
+    </div>
   </div>
 
   <div *ngIf="cargando" class="loading-state">
@@ -10,49 +19,65 @@
   </div>
 
   <div *ngIf="!cargando && reservas.length === 0" class="empty-state glass-panel">
-    <div class="empty-icon">{{ esPropietario ? '📬' : '🧳' }}</div>
-    <h3>{{ esPropietario ? 'Aún no tienes reservas' : 'No tienes ningún viaje próximo' }}</h3>
-    <p>{{ esPropietario ? 'Cuando alguien reserve tu casa, aparecerá aquí.' : 'Explora el catálogo y encuentra tu próximo destino.' }}</p>
+    <div class="empty-icon">{{ viendoRecibidas ? '📬' : '🧳' }}</div>
+    <h3>{{ viendoRecibidas ? 'Aún no tienes reservas' : 'No tienes ningún viaje próximo' }}</h3>
+    <p>{{ viendoRecibidas ? 'Cuando alguien reserve tu casa, aparecerá aquí.' : 'Explora el catálogo y encuentra tu próximo destino.' }}</p>
     <br>
-    <button *ngIf="!esPropietario" class="btn-primary" routerLink="/catalogo">Explorar alojamientos</button>
+    <button *ngIf="!viendoRecibidas" class="btn-primary" routerLink="/catalogo">Explorar alojamientos</button>
   </div>
 
-  <div class="reservas-list" *ngIf="!cargando && reservas.length > 0">
+<div class="reservas-list" *ngIf="!cargando && reservas.length > 0">
     
     <article class="reserva-card glass-panel" *ngFor="let res of reservas">
       
-      <div class="reserva-info">
-        <div class="reserva-top">
-          <span class="badge" [ngClass]="res.estado?.toLowerCase()">{{ res.estado || 'PENDIENTE' }}</span>
-          <h3 translate="no">{{ res.propiedad?.titulo || 'Alojamiento Borrado' }}</h3>
+<div class="reserva-img" 
+           [routerLink]="res.propiedad?.id ? ['/propiedad', res.propiedad.id] : null"
+           [title]="res.propiedad?.id ? 'Ver detalles de la propiedad' : ''">
+  <img [src]="getImagen(res.propiedad)" [alt]="res.propiedad?.titulo">
+</div>
+
+<div class="reserva-content">
+        <div class="reserva-info">
+          <div class="reserva-top">
+            <span class="badge" [ngClass]="res.estado?.toLowerCase()">{{ res.estado || 'PENDIENTE' }}</span>
+            <h3 translate="no">{{ res.propiedad?.titulo || 'Alojamiento Borrado' }}</h3>
+          </div>
+          
+          <p class="fechas">📅 {{ res.fecha_inicio }} al {{ res.fecha_fin }}</p>
+          
+          <div class="detalles">
+            <p><strong>Total:</strong> {{ res.total }}€</p>
+            <p *ngIf="viendoRecibidas"><strong>Huésped:</strong> {{ res.huesped?.nombre || 'Usuario ' + res.huesped?.id }}</p>
+          </div>
         </div>
-        
-        <p class="fechas">📅 {{ res.fecha_inicio }} al {{ res.fecha_fin }}</p>
-        
-        <div class="detalles">
-          <p><strong>Total:</strong> {{ res.total }}€</p>
-          <p *ngIf="esPropietario"><strong>Huésped:</strong> {{ res.huesped?.nombre || 'Usuario ' + res.huesped?.id }}</p>
+
+        <div class="reserva-actions">
+          <button class="btn-secondary" [routerLink]="['/chat', res.id]">Mensajes</button>
+          
+<ng-container *ngIf="viendoRecibidas">
+          <ng-container *ngIf="res.estado === 'PENDIENTE'">
+            <button class="btn-primary btn-success" (click)="cambiarEstado(res.id, 'CONFIRMADA')">Aceptar</button>
+            <button class="btn-danger" (click)="cambiarEstado(res.id, 'CANCELADA')">Rechazar</button>
+          </ng-container>
+          
+          <button *ngIf="res.estado === 'CANCELADA'" class="btn-secondary" style="opacity: 0.8;" (click)="cambiarEstado(res.id, 'ARCHIVADA')">
+            🗑️ Ocultar del listado
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="!viendoRecibidas">
+          <button *ngIf="res.estado !== 'CANCELADA' && res.estado !== 'CONFIRMADA'" class="btn-danger" (click)="cambiarEstado(res.id, 'CANCELADA')">
+            Cancelar Reserva
+          </button>
+
+          <button *ngIf="res.estado === 'CANCELADA'" class="btn-secondary" style="opacity: 0.8;" (click)="cambiarEstado(res.id, 'ARCHIVADA')">
+            🗑️ Eliminar de Mis Viajes
+          </button>
+        </ng-container>
         </div>
       </div>
 
-      <div class="reserva-actions">
-        <!-- Chat Button -->
-        <button class="btn-secondary" [routerLink]="['/chat', res.id]">Mensajes</button>
-        
-        <!-- Acciones de Propietario -->
-        <ng-container *ngIf="esPropietario && res.estado === 'PENDIENTE'">
-          <button class="btn-primary btn-success" (click)="cambiarEstado(res.id, 'CONFIRMADA')">Aceptar</button>
-          <button class="btn-danger" (click)="cambiarEstado(res.id, 'CANCELADA')">Rechazar</button>
-        </ng-container>
-
-        <!-- Acciones de Huésped -->
-        <ng-container *ngIf="!esPropietario && res.estado !== 'CANCELADA' && res.estado !== 'CONFIRMADA'">
-          <button class="btn-danger" (click)="cambiarEstado(res.id, 'CANCELADA')">Cancelar Reserva</button>
-        </ng-container>
-
-      </div>
     </article>
-
   </div>
 
 </div>

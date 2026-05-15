@@ -32,12 +32,7 @@ export class ReservasService {
     return this.http.post<Reserva>(this.apiUrl, reserva);
   }
 
-  actualizarEstadoReserva(id: number, estado: string): Observable<Reserva> {
-    // Al backend le pasamos al menos el estado (el backend puede requerir otros datos obligatorios según el PUT del API JSON, lo comprobaremos)
-    // Según el JSON, es un PUT completo. Simplificaremos asumiendo que el backend puede actualizar el estado. 
-    // OJO: El JSON indicaba actualizar enviando varias cosas.
-    const payload = { estado: estado };
-    // Asumiremos que el backend Spring Data REST permite PUT o PATCH parciales.
-    return this.http.put<Reserva>(`${this.apiUrl}/${id}`, payload);
+  actualizarEstadoReserva(id: number, estado: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/estado`, { estado }, { responseType: 'text' });
   }
 }

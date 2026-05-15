@@ -22,21 +22,23 @@ export class LoginComponent {
   private favoritosService = inject(FavoritosService);
   onLogin() {
     this.cargando = true;
-    this.errorMensaje = '';
-    
     this.authService.login(this.emailLogin, this.passwordLogin).subscribe({
-      next: (respuesta: any) => {
-        this.authService.iniciarSesion(respuesta.token);
+      next: (respuesta) => {
+        if (respuesta && respuesta.token) {
+          // El authService.iniciarSesion pone el semáforo en verde
+          // y el FavoritosService, que está escuchando, cargará los datos solo.
+          this.authService.iniciarSesion(respuesta.token); 
+          this.router.navigate(['/mis-propiedades']);
+        } else {
+          this.errorMensaje = 'Error desconocido al iniciar sesión.';
+        }
         this.cargando = false;
-        this.router.navigate(['/catalogo']); 
-        // En tu login.ts, después de guardar el token:
-       this.favoritosService.cargarFavoritosDelUsuario(this.emailLogin);
       },
-      error: (err: any) => {
+      error: (err) => {
+        this.errorMensaje = 'Credenciales incorrectas.';
         this.cargando = false;
-        this.errorMensaje = 'Credenciales incorrectas. Inténtalo de nuevo.';
+        console.error(err);
       }
-      
     });
   }
 }

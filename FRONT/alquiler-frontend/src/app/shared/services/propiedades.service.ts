@@ -25,6 +25,7 @@ export class PropiedadesService {
   listarPropiedades(): Observable<Propiedad[]> {
     return this.http.get<Propiedad[]>(`${this.apiUrl}/propiedades`);
   }
+  // Obtener una propiedad por ID para editar
   getPropiedadById(id: number): Observable<Propiedad> {
     return this.http.get<Propiedad>(`${this.apiUrl}/propiedades/${id}`);
   }
@@ -38,7 +39,7 @@ export class PropiedadesService {
   }
 
   actualizarPropiedad(id: number, propiedad: Propiedad): Observable<Propiedad> {
-    return this.http.put<Propiedad>(`${this.apiUrl}/propiedades/${id}`, propiedad);
+  return this.http.put<Propiedad>(`${this.apiUrl}/propiedades/${id}`, propiedad);
   }
 
   borrarPropiedad(id: number): Observable<void> {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db:3306
--- Tiempo de generación: 14-05-2026 a las 17:37:29
+-- Tiempo de generación: 15-05-2026 a las 20:06:26
 -- Versión del servidor: 10.3.39-MariaDB-1:10.3.39+maria~ubu2004
 -- Versión de PHP: 8.2.27
 
@@ -24,20 +24,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `huesped`
+-- Estructura de tabla para la tabla `favoritos`
 --
 
-CREATE TABLE `huesped` (
-  `id` int(11) NOT NULL
+CREATE TABLE `favoritos` (
+  `usuario_id` int(11) NOT NULL,
+  `propiedad_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Volcado de datos para la tabla `huesped`
+-- Volcado de datos para la tabla `favoritos`
 --
 
-INSERT INTO `huesped` (`id`) VALUES
-(2),
-(5);
+INSERT INTO `favoritos` (`usuario_id`, `propiedad_id`) VALUES
+(3, 1),
+(6, 3),
+(6, 6),
+(2, 2);
 
 -- --------------------------------------------------------
 
@@ -49,7 +52,7 @@ CREATE TABLE `imagen_propiedad` (
   `id` int(11) NOT NULL,
   `url` varchar(255) DEFAULT NULL,
   `propiedad_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `imagen_propiedad`
@@ -101,7 +104,10 @@ INSERT INTO `imagen_propiedad` (`id`, `url`, `propiedad_id`) VALUES
 (43, 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af', 15),
 (44, 'https://images.unsplash.com/photo-1486304873000-235643847519', 15),
 (45, 'https://images.unsplash.com/photo-1505691722718-25036f1fe021', 15),
-(46, 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9', 2);
+(46, 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9', 2),
+(48, 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7', 19),
+(49, 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7', 20),
+(51, 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf', 3);
 
 -- --------------------------------------------------------
 
@@ -116,7 +122,7 @@ CREATE TABLE `mensaje` (
   `emisor_id` int(11) NOT NULL,
   `receptor_id` int(11) NOT NULL,
   `reserva_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `mensaje`
@@ -132,35 +138,9 @@ INSERT INTO `mensaje` (`id`, `contenido`, `enviado_en`, `emisor_id`, `receptor_i
 (7, '¿La piscina de la villa está climatizada?', '2026-05-10 19:00:26.000000', 5, 3, 4),
 (8, '¿Hay WiFi en la cabaña?', '2026-05-10 19:00:26.000000', 2, 1, 2),
 (9, 'Sí, pero la señal es algo débil por los árboles.', '2026-05-10 19:00:26.000000', 1, 2, 2),
-(10, 'Gracias por la info.', '2026-05-10 19:00:26.000000', 2, 1, 2);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `persona`
---
-
-CREATE TABLE `persona` (
-  `id` int(11) NOT NULL,
-  `dni` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
-  `tipo_usuario` enum('HUESPED','PROPIETARIO') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `persona`
---
-
-INSERT INTO `persona` (`id`, `dni`, `email`, `nombre`, `password`, `telefono`, `tipo_usuario`) VALUES
-(1, '12345678A', 'alex@test.com', 'Alex Admin', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000001', 'PROPIETARIO'),
-(2, '23456789B', 'beatriz@test.com', 'Beatriz Viajera', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000002', 'PROPIETARIO'),
-(3, '34567890C', 'carlos@test.com', 'Carlos Casero', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000003', 'PROPIETARIO'),
-(4, '45678901D', 'diana@test.com', 'Diana Dueña', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000004', 'PROPIETARIO'),
-(5, '56789012E', 'elena@test.com', 'Elena Exploradora', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000005', 'HUESPED'),
-(6, '65658999L', 'a@mail.com', 'a', '$2a$10$7GgGtjkNdU.VaSvbbFnXiexWsxDLQveU1l/406QTdv.f3zztrB/8q', '111555999', 'PROPIETARIO');
+(10, 'Gracias por la info.', '2026-05-10 19:00:26.000000', 2, 1, 2),
+(31, 'Hola', NULL, 2, 1, 9),
+(32, 'gg', NULL, 6, 3, 12);
 
 -- --------------------------------------------------------
 
@@ -176,17 +156,17 @@ CREATE TABLE `propiedad` (
   `max_huespedes` int(11) NOT NULL,
   `precio_noche` double NOT NULL,
   `titulo` varchar(255) DEFAULT NULL,
-  `propietario_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `usuario_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `propiedad`
 --
 
-INSERT INTO `propiedad` (`id`, `calendario`, `descripcion`, `direccion`, `max_huespedes`, `precio_noche`, `titulo`, `propietario_id`) VALUES
+INSERT INTO `propiedad` (`id`, `calendario`, `descripcion`, `direccion`, `max_huespedes`, `precio_noche`, `titulo`, `usuario_id`) VALUES
 (1, NULL, 'Espectacular ático en primera línea de playa con terraza privada.', 'Paseo Marítimo 12, Málaga', 4, 120.5, 'Casa en zona residencial', 1),
 (2, NULL, 'Cabaña de madera ideal para parejas rodeada de pinos.', 'Camino del Monte s/n, Sierra Nevada', 2, 75, 'Lujoso Chalet', 1),
-(3, NULL, 'Diseño moderno en el corazón de la ciudad, techos altos.', 'Calle Nueva 5, Madrid', 3, 110, 'Atico Moderno en el Centro', 3),
+(3, '2026-05-15', 'Diseño moderno en el corazón de la ciudad, techos altos.', 'Calle Nueva 5, Madrid', 4, 110, 'Atico Moderno en el Centro', 3),
 (4, NULL, 'Mansión con 5 dormitorios, jardín botánico y piscina infinita.', 'Urb. El Pinar, Marbella', 10, 450, 'Bonito Apartamento', 3),
 (5, NULL, 'Cerca de museos y zonas comerciales, muy luminoso.', 'Av. Libertad 45, Bilbao', 2, 90, 'Dúplex estilo Industrial', 3),
 (6, NULL, 'Paredes de piedra y chimenea. Perfecta para familias.', 'Plaza Mayor 1, Alquézar', 6, 130, 'Casa con Piscina', 4),
@@ -195,30 +175,14 @@ INSERT INTO `propiedad` (`id`, `calendario`, `descripcion`, `direccion`, `max_hu
 (9, NULL, 'Decoración de los años 70 con todas las comodidades modernas.', 'Calle Pez 14, Madrid', 4, 95, 'Chalet Adosado de Lujo', 1),
 (10, NULL, 'A 50 metros de la arena, con porche y hamacas.', 'Cala Ratjada, Mallorca', 5, 140, 'Bungalow en la Costa', 1),
 (11, NULL, 'Dos plantas con mucha luz y domótica integrada.', 'Calle Rio 22, Valencia', 4, 115, 'Duplex Moderno', 3),
-(12, NULL, 'Gran propiedad con pinos y trasero.', 'Ctra. Carmona km 4, Sevilla', 12, 300, 'Casa en la Montaña', 3),
-(13, NULL, 'Gran complejo de lujo para uso privado con todo tipo de lujo y comodidades, así como sauna y jacuzzi.', 'Calle San Jorge, Cáceres', 2, 85, 'Complejo de Lujo Privado', 4),
+(12, NULL, 'Gran propiedad con pinos y trastero.', 'Ctra. Carmona km 4, Sevilla', 12, 300, 'Casa en la Montaña', 3),
+(13, NULL, 'Gran complejo de lujo para uso privado con todo tipo de comodidades.', 'Calle San Jorge, Cáceres', 2, 85, 'Complejo de Lujo Privado', 4),
 (14, NULL, 'Sencillo y limpio, ideal para surfistas.', 'Calle Ola 1, Tarifa', 3, 60, 'Apartamento de Playa Económico', 4),
-(15, NULL, 'Jacuzzi en la terraza y acabados de mármol.', 'Diagonal 100, Barcelona', 4, 550, 'Penthouse Exclusivo', 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `propietario`
---
-
-CREATE TABLE `propietario` (
-  `id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `propietario`
---
-
-INSERT INTO `propietario` (`id`) VALUES
-(1),
-(3),
-(4),
-(6);
+(15, NULL, 'Jacuzzi en la terraza y acabados de mármol.', 'Diagonal 100, Barcelona', 4, 550, 'Penthouse Exclusivo', 1),
+(16, '2026-05-18', 'qwdqwdqwd', 'qwdqwdqw', 1, 1, 'qwdqwdq', 6),
+(17, '2026-05-24', 'wretywety', 'wertwert', 2, 7, 'rtywrtywrt', 1),
+(19, '2026-05-15', 'iuyyoyooi', 'kjlkglglkjjghlk', 7, 545, 'gkjjkjgjgk', 4),
+(20, '2026-05-15', 'sdgdfs', 'sdfsdf', 8, 454, 'sdfsdfsdf', 4);
 
 -- --------------------------------------------------------
 
@@ -229,13 +193,13 @@ INSERT INTO `propietario` (`id`) VALUES
 CREATE TABLE `reserva` (
   `id` int(11) NOT NULL,
   `creado_en` datetime(6) DEFAULT NULL,
-  `estado` enum('CANCELADA','CONFIRMADA','PENDIENTE') DEFAULT NULL,
+  `estado` enum('PENDIENTE','CONFIRMADA','CANCELADA','ARCHIVADA') DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `total` double NOT NULL,
   `huesped_id` int(11) DEFAULT NULL,
   `propiedad_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `reserva`
@@ -250,54 +214,82 @@ INSERT INTO `reserva` (`id`, `creado_en`, `estado`, `fecha_fin`, `fecha_inicio`,
 (6, '2026-05-10 19:00:26.000000', 'CANCELADA', '2024-09-15', '2024-09-10', 650, 5, 6),
 (7, '2026-05-10 19:00:26.000000', 'PENDIENTE', '2024-07-22', '2024-07-20', 90, 2, 7),
 (8, '2026-05-10 19:00:26.000000', 'CONFIRMADA', '2024-12-27', '2024-12-20', 1470, 5, 8),
-(9, '2026-05-10 19:00:26.000000', 'PENDIENTE', '2024-07-10', '2024-07-05', 475, 2, 9),
-(10, '2026-05-10 19:00:26.000000', 'CONFIRMADA', '2024-08-07', '2024-08-01', 840, 5, 10);
+(9, '2026-05-10 19:00:26.000000', 'ARCHIVADA', '2024-07-10', '2024-07-05', 475, 2, 9),
+(10, '2026-05-10 19:00:26.000000', 'CONFIRMADA', '2024-08-07', '2024-08-01', 840, 5, 10),
+(11, '2026-05-14 23:42:44.935532', 'PENDIENTE', '2024-12-31', '2024-12-24', 550, 2, 1),
+(12, '2026-05-15 20:27:57.837885', 'CANCELADA', '2026-05-18', '2026-05-16', 220, 6, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `id` int(11) NOT NULL,
+  `dni` varchar(20) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `nombre` varchar(100) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `rol` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `dni`, `email`, `nombre`, `password`, `telefono`, `rol`) VALUES
+(1, '12345678A', 'alex@test.com', 'Alex Admin', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000001', 'USUARIO'),
+(2, '23456789B', 'beatriz@test.com', 'Beatriz Viajera', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000002', 'USUARIO'),
+(3, '34567890C', 'carlos@test.com', 'Carlos Casero', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000003', 'USUARIO'),
+(4, '45678901D', 'diana@test.com', 'Diana Dueña', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000004', 'USUARIO'),
+(5, '56789012E', 'elena@test.com', 'Elena Exploradora', '$2a$12$eVfQ3w8b5g1gpbbUtBz9we4lCcIx04XEq.bEGOuB3.YTz8nTTOP4.', '+34600000005', 'USUARIO'),
+(6, '65658999L', 'a@mail.com', 'a', '$2a$10$7GgGtjkNdU.VaSvbbFnXiexWsxDLQveU1l/406QTdv.f3zztrB/8q', '111555999', 'USUARIO'),
+(7, '66335998L', 'c@mail.com', 'c', '$2a$10$ABEAvHWorV7zqeNYUngQUOBM5wnfOFwx9ooC371f0HAljNgxaHtFC', '456456456', 'USUARIO');
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `huesped`
---
-ALTER TABLE `huesped`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `imagen_propiedad`
 --
 ALTER TABLE `imagen_propiedad`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `propiedad_id` (`propiedad_id`);
 
 --
 -- Indices de la tabla `mensaje`
 --
 ALTER TABLE `mensaje`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `persona`
---
-ALTER TABLE `persona`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `emisor_id` (`emisor_id`),
+  ADD KEY `receptor_id` (`receptor_id`),
+  ADD KEY `reserva_id` (`reserva_id`);
 
 --
 -- Indices de la tabla `propiedad`
 --
 ALTER TABLE `propiedad`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `propietario`
---
-ALTER TABLE `propietario`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `huesped_id` (`huesped_id`),
+  ADD KEY `propiedad_id` (`propiedad_id`);
+
+--
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `dni` (`dni`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -307,31 +299,62 @@ ALTER TABLE `reserva`
 -- AUTO_INCREMENT de la tabla `imagen_propiedad`
 --
 ALTER TABLE `imagen_propiedad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `mensaje`
 --
 ALTER TABLE `mensaje`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT de la tabla `persona`
---
-ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `propiedad`
 --
 ALTER TABLE `propiedad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `imagen_propiedad`
+--
+ALTER TABLE `imagen_propiedad`
+  ADD CONSTRAINT `imagen_propiedad_ibfk_1` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedad` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `mensaje`
+--
+ALTER TABLE `mensaje`
+  ADD CONSTRAINT `mensaje_ibfk_1` FOREIGN KEY (`emisor_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mensaje_ibfk_2` FOREIGN KEY (`receptor_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mensaje_ibfk_3` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `propiedad`
+--
+ALTER TABLE `propiedad`
+  ADD CONSTRAINT `propiedad_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `reserva`
+--
+ALTER TABLE `reserva`
+  ADD CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`huesped_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedad` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

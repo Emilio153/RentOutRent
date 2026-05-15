@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,6 +48,20 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private Rol rol; 
 
+ // ==========================================
+    // FAVORITOS (Se creará la tabla automáticamente)
+    // ==========================================
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "favoritos",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "propiedad_id")
+    )
+    @JsonIgnore // Para evitar bucles infinitos al devolver el usuario en JSON
+    private List<Propiedad> favoritos = new ArrayList<>();
+
+    public List<Propiedad> getFavoritos() { return favoritos; }
+    public void setFavoritos(List<Propiedad> favoritos) { this.favoritos = favoritos; }
  // =========================================================
     // MÉTODOS DE SPRING SECURITY
     // =========================================================

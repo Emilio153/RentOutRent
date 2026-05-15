@@ -1,52 +1,81 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import { Propiedad } from './propiedades.service';
+import { UsuariosService } from './usuarios.service';
+import { AuthService } from '../../auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritosService {
-  private favoritos: Propiedad[] = [];
-  private favoritosSubject = new BehaviorSubject<Propiedad[]>([]);
-  favoritos$ = this.favoritosSubject.asObservable();
-  
-  private userEmail: string = '';
+  private apiUrl = 'http://localhost:8092/api/usuarios';
+  private http = inject(HttpClient);
+  private usuariosService = inject(UsuariosService);
+  private authService = inject(AuthService);
 
-  // 🔥 MÉTODO CLAVE: Se llama al iniciar sesión
-  cargarFavoritosDelUsuario(email: string) {
-    this.userEmail = email;
-    const key = `ror_favoritos_${this.userEmail}`; // Ejemplo: ror_favoritos_maria@test.com
-    const guardados = localStorage.getItem(key);
-    
-    this.favoritos = guardados ? JSON.parse(guardados) : [];
-    this.favoritosSubject.next(this.favoritos);
+  private favoritosSubject = new BehaviorSubject<any[]>([]);
+  favoritos$ = this.favoritosSubject.asObservable();
+
+  constructor() {
+    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+      if (isLoggedIn) {
+        this.cargarFavoritosDelServidor();
+      } else {
+        this.favoritosSubject.next([]); 
+      }
+    });
   }
 
-  toggleFavorito(propiedad: Propiedad) {
-    if (!this.userEmail) return; // Si no hay usuario, no hacemos nada
+  cargarFavoritosDelServidor() {
+    const miId = this.usuariosService.obtenerMiIdDesdeToken();
+    if (miId) {
+      this.http.get<any[]>(`${this.apiUrl}/${miId}/favoritos`).subscribe({
+        next: (favs) => this.favoritosSubject.next(favs),
+        error: (err) => console.error('Error cargando favoritos', err)
+      });
+    }
+  }
 
-    const indice = this.favoritos.findIndex(p => String(p.id) === String(propiedad.id));
-    
-    if (indice === -1) {
-      this.favoritos.push(propiedad);
-    } else {
-      this.favoritos.splice(indice, 1);
+  toggleFavorito(propiedad: any) {
+    const miId = this.usuariosService.obtenerMiIdDesdeToken();
+    if (!miId) {
+      alert('Debes iniciar sesión para añadir a favoritos');
+      return;
     }
 
-    // Guardamos en la caja específica de este usuario
-    localStorage.setItem(`ror_favoritos_${this.userEmail}`, JSON.stringify(this.favoritos));
-    this.favoritosSubject.next(this.favoritos);
+    const actuales = this.favoritosSubject.value;
+    const esFavorito = actuales.some(p => p.id === propiedad.id);
+
+    if (esFavorito) {
+      // 💔 1. ACTUALIZACIÓN OPTIMISTA: Lo quitamos al instante visualmente
+      this.favoritosSubject.next(actuales.filter(p => p.id !== propiedad.id));
+
+      // 2. Avisamos al servidor por detrás (con responseType text para evitar fallos de lectura)
+      this.http.delete(`${this.apiUrl}/${miId}/favoritos/${propiedad.id}`, { responseType: 'text' }).subscribe({
+        error: (err) => {
+          console.error('Fallo al quitar del servidor:', err);
+          this.favoritosSubject.next(actuales); // Si falla la BD, deshacemos el cambio
+        }
+      });
+    } else {
+      // 💖 1. ACTUALIZACIÓN OPTIMISTA: Lo añadimos al instante visualmente
+      this.favoritosSubject.next([...actuales, propiedad]);
+
+      // 2. Avisamos al servidor por detrás
+      this.http.post(`${this.apiUrl}/${miId}/favoritos/${propiedad.id}`, {}, { responseType: 'text' }).subscribe({
+        error: (err) => {
+          console.error('Fallo al añadir al servidor:', err);
+          this.favoritosSubject.next(actuales); // Si falla la BD, deshacemos el cambio
+        }
+      });
+    }
   }
 
-  esFavorito(id: number): boolean {
-    return this.favoritos.some(p => String(p.id) === String(id));
+  esFavorito(propiedadId: number): boolean {
+    return this.favoritosSubject.value.some(p => p.id === propiedadId);
   }
 
-  // 🔥 LIMPIEZA SUAVE: Solo borra la memoria, NO el localStorage
   limpiarFavoritos() {
-    this.favoritos = [];
     this.favoritosSubject.next([]);
-    this.userEmail = ''; 
-    // Ya NO hacemos localStorage.removeItem, así los datos siguen ahí para cuando vuelva
   }
 }

@@ -2,8 +2,8 @@
   
   <div class="form-card glass-panel">
     <div class="form-header">
-      <h2 translate="no">Publicar un alojamiento</h2>
-      <p>Rellena los datos para que los huéspedes puedan encontrarte</p>
+      <h2 translate="no">{{ editando ? 'Editar Propiedad' : 'Publicar un alojamiento' }}</h2>
+      <p>{{ editando ? 'Modifica los datos de tu alojamiento' : 'Rellena los datos para que los huéspedes puedan encontrarte' }}</p>
     </div>
 
     <div *ngIf="errorMensaje" class="alert-danger">
@@ -57,8 +57,9 @@
 
       <div class="actions">
         <button type="button" class="btn-secondary" routerLink="/mis-propiedades">Cancelar</button>
+        
         <button type="submit" class="btn-primary" [disabled]="!form.valid || cargando">
-          {{ cargando ? 'Guardando...' : 'Publicar alojamiento' }}
+          {{ cargando ? 'Guardando...' : (editando ? 'Guardar Cambios' : 'Publicar alojamiento') }}
         </button>
       </div>
 

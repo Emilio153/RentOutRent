@@ -30,16 +30,37 @@
       <p class="descripcion">{{ propiedad.descripcion }}</p>
     </section>
 
-    <aside class="reserva-card glass-panel">
+<aside class="reserva-card glass-panel">
       <div class="precio-header">
         <h2>{{ propiedad.precio_noche | number:'1.2-2'}}€</h2> <span>/ noche</span>
       </div>
       
       <div class="reserva-form">
         <p><strong>Disponible desde:</strong> {{ propiedad.calendario }}</p>
+        
+        <div class="fechas-grid" style="display: flex; gap: 10px; margin-top: 15px;">
+          <div class="input-group" style="flex: 1;">
+            <label style="display: block; font-size: 0.8rem; margin-bottom: 5px;">Llegada</label>
+            <input type="date" [(ngModel)]="fechaInicio" (change)="calcularTotal()" [min]="hoy()" style="width: 100%; padding: 8px; border-radius: 5px;">
+          </div>
+          <div class="input-group" style="flex: 1;">
+            <label style="display: block; font-size: 0.8rem; margin-bottom: 5px;">Salida</label>
+            <input type="date" [(ngModel)]="fechaFin" (change)="calcularTotal()" [min]="fechaInicio || hoy()" style="width: 100%; padding: 8px; border-radius: 5px;">
+          </div>
+        </div>
+
+        <div *ngIf="noches > 0" class="resumen-precio" style="margin-top: 15px; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px;">
+          <p style="margin: 0; font-size: 0.9rem;">{{ propiedad.precio_noche }}€ x {{ noches }} noches</p>
+          <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
+          <p class="total" style="margin: 0; font-size: 1.2rem;"><strong>Total: {{ totalEstimado }}€</strong></p>
+        </div>
       </div>
 
-      <button class="btn-primary btn-block">Reservar ahora</button>
+      <button class="btn-primary btn-block" style="margin-top: 20px;"
+              (click)="hacerReserva()" 
+              [disabled]="noches <= 0 || creandoReserva">
+        {{ creandoReserva ? 'Procesando...' : 'Reservar ahora' }}
+      </button>
     </aside>
 
   </div>

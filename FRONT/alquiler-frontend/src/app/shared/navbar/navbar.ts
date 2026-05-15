@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../auth';
 import { FavoritosService } from '../services/favoritos.service';
-
+import { UsuariosService } from '../services/usuarios.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -15,16 +15,45 @@ export class Navbar {
   private authService = inject(AuthService);
   public router = inject(Router);
   private favoritosService = inject(FavoritosService);
-  
+  private cdr = inject(ChangeDetectorRef);
+  private usuariosService = inject(UsuariosService);
   estaLogueado: boolean = false;
+  nombreUsuario: string = '';
+  
   cantidadFavoritos: number = 0;
   
-  // 🔥 Nuevo: Controla si estamos viendo el menú de anfitrión o de viajero
   modoAnfitrion: boolean = false;
 
   constructor() {
-    this.authService.isLoggedIn$.subscribe(status => this.estaLogueado = status);
-    this.favoritosService.favoritos$.subscribe(favs => this.cantidadFavoritos = favs.length);
+    this.authService.isLoggedIn$.subscribe(status => {
+      this.estaLogueado = status;
+      if (status) {
+        this.cargarDatosUsuario();
+      } else {
+        this.nombreUsuario = '';
+      }
+      this.cdr.detectChanges();
+    });
+    
+    // 🔥 3. Cuando lleguen los favoritos del servidor, despertamos a la burbuja
+    this.favoritosService.favoritos$.subscribe(favs => {
+      this.cantidadFavoritos = favs.length;
+      this.cdr.detectChanges(); 
+    });
+  }
+  // 🔥 Función para obtener el nombre del usuario desde la BD
+  cargarDatosUsuario() {
+    const miId = this.usuariosService.obtenerMiIdDesdeToken();
+    if (miId) {
+      // Usamos el endpoint que ya deberías tener en tu backend para ver un usuario
+      this.usuariosService.getUsuarioById(miId).subscribe({
+        next: (u: any) => {
+          this.nombreUsuario = u.nombre;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => console.error('Error al cargar nombre:', err)
+      });
+    }
   }
 
   get esPropietario(): boolean {
@@ -54,10 +83,6 @@ export class Navbar {
       }
     });
   }
-
-  
-  // ... (mantén el resto de métodos como irAExplorar)
-
   irAExplorar() {
     if (this.router.url === '/catalogo') {
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {

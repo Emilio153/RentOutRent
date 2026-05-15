@@ -27,13 +27,14 @@
     
     <article class="propiedad-card glass-panel" *ngFor="let casa of propiedades">
       
-      <div class="imagen-container">
+<div class="imagen-container">
         <img [src]="getImagen(casa)" [alt]="'Imagen de ' + casa.titulo" loading="lazy">
+        
         <div class="favorito-btn" 
             [class.activo]="esFavorito(casa.id!)" 
             (click)="toggleFavorito(casa, $event)" 
             aria-label="Añadir a favoritos">
-          ♥
+          {{ esFavorito(casa.id!) ? '❤️' : '🤍' }}
         </div>
       </div>
 

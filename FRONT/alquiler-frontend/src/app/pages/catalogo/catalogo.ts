@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { PropiedadesService, Propiedad } from '../../shared/services/propiedades.service';
+import { PropiedadesService, Propiedad } from '../../shared/services/propiedades.service'; // Asegúrate de importar Propiedad
 import { FavoritosService } from '../../shared/services/favoritos.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-catalogo',
@@ -16,12 +16,20 @@ export class CatalogoComponent implements OnInit {
   private favoritosService = inject(FavoritosService);
   private propiedadesService = inject(PropiedadesService);
   private cdr = inject(ChangeDetectorRef);
+  
   propiedades: Propiedad[] = [];
   terminoBusqueda: string = '';
   cargando: boolean = true;
 
   ngOnInit() {
     this.cargarPropiedades();
+
+    // 🔥 ¡ESTA ES LA MAGIA QUE FALTABA!
+    // Nos suscribimos al servicio. Cuando la BD responda con tus favoritos, 
+    // el servicio avisará por aquí y forzaremos el repintado de los corazones.
+    this.favoritosService.favoritos$.subscribe(() => {
+      this.cdr.detectChanges();
+    });
   }
 
   cargarPropiedades() {
@@ -67,6 +75,7 @@ export class CatalogoComponent implements OnInit {
     // Imagen por defecto si no tiene ninguna
     return 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80';
   }
+  
   toggleFavorito(casa: Propiedad, event: Event) {
     event.stopPropagation(); // Evita que se abra la tarjeta entera al darle al corazón
     this.favoritosService.toggleFavorito(casa);
@@ -75,5 +84,4 @@ export class CatalogoComponent implements OnInit {
   esFavorito(id: number): boolean {
     return this.favoritosService.esFavorito(id);
   }
-
 }

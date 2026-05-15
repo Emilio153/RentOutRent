@@ -34,14 +34,20 @@ export class UsuariosService {
       return null;
     }
   }
+  
+  getUsuarioById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/usuarios/${id}`);
+  }
 
   // ==========================================
   // RUTAS DEL USUARIO (Unificadas)
   // ==========================================
 
-  // --- Mis Propiedades ---
+// --- Mis Propiedades ---
   misPropiedades(usuarioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/propiedades`);
+    // 🔥 Truco ninja: El timestamp obliga al navegador a pedir datos frescos
+    const timestamp = new Date().getTime();
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/propiedades?t=${timestamp}`);
   }
 
   // --- Mis Reservas (Recibidas en mis propiedades) ---

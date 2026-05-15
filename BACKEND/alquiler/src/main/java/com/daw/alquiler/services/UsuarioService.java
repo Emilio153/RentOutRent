@@ -1,5 +1,6 @@
 package com.daw.alquiler.services;
 
+import com.daw.alquiler.persistence.entities.Propiedad;
 import com.daw.alquiler.persistence.entities.Usuario;
 import com.daw.alquiler.persistence.repositories.UsuarioRepository;
 // OJO: Si tenías PersonaNotFoundException, cámbiale el nombre a UsuarioNotFoundException en tu proyecto
@@ -18,7 +19,8 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
+    @Autowired
+    private com.daw.alquiler.persistence.repositories.PropiedadRepository propiedadRepository;
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
@@ -59,5 +61,25 @@ public class UsuarioService implements UserDetailsService {
         
         // Devolvemos la entidad Usuario (que ya implementa UserDetails)
         return usuario; 
+    }
+
+    // --- MÉTODOS DE FAVORITOS ---
+    public List<Propiedad> getFavoritos(int usuarioId) {
+        return findById(usuarioId).getFavoritos();
+    }
+
+    public void addFavorito(int usuarioId, int propiedadId) {
+        Usuario u = findById(usuarioId);
+        Propiedad p = propiedadRepository.findById(propiedadId).orElseThrow();
+        if (!u.getFavoritos().contains(p)) {
+            u.getFavoritos().add(p);
+            usuarioRepository.save(u);
+        }
+    }
+
+    public void removeFavorito(int usuarioId, int propiedadId) {
+        Usuario u = findById(usuarioId);
+        u.getFavoritos().removeIf(p -> p.getId() == propiedadId);
+        usuarioRepository.save(u);
     }
 }

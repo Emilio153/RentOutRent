@@ -33,11 +33,13 @@
         <p class="ubicacion">{{ p.direccion }}</p>
         <p class="precio"><strong>{{ p.precio_noche }}€</strong> / noche</p>
       </div>
-      <div class="p-actions">
-        <button class="btn-secondary" [routerLink]="['/propiedad', p.id]">Ver</button>
-        <!-- En un caso real habría routerLink a editar -->
-        <button class="btn-danger" (click)="borrarPropiedad(p.id)">Eliminar</button>
-      </div>
+<div class="p-actions">
+  <button class="btn-secondary" [routerLink]="['/propiedad', p.id]">Ver</button>
+  
+  <button class="btn-secondary" [routerLink]="['/editar-propiedad', p.id]">Editar</button>
+  
+  <button class="btn-danger" (click)="borrarPropiedad(p.id)">Eliminar</button>
+</div>
     </div>
   </div>
 

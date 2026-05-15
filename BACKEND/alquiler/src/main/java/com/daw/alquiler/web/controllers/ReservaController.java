@@ -72,4 +72,39 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
+    
+ // ==========================================
+    // NUEVO ENDPOINT: ACTUALIZAR ESTADO (CORREGIDO PARA ENUM)
+    // ==========================================
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> updateEstado(@PathVariable int id, @RequestBody java.util.Map<String, String> body) {
+        try {
+            // Extraemos el estado como texto del JSON
+            String estadoTexto = body.get("estado");
+            
+            // 🔥 Lo convertimos a tu Enum 'Estado'
+            com.daw.alquiler.persistence.entities.enums.Estado nuevoEstado = 
+                com.daw.alquiler.persistence.entities.enums.Estado.valueOf(estadoTexto);
+            
+            // Buscamos la reserva
+            Reserva reserva = this.reservaService.findById(id);
+            
+            // Le cambiamos el estado
+            reserva.setEstado(nuevoEstado); 
+            
+            // Guardamos los cambios
+            this.reservaService.save(reserva); 
+            
+            // Devolvemos un texto plano (Angular está esperando responseType: 'text')
+            return ResponseEntity.ok("Estado actualizado a " + nuevoEstado.name());
+            
+        } catch (IllegalArgumentException ex) {
+            // Si Angular envía un estado que no existe en tu Enum (ej. "HOLA")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Estado no válido");
+        } catch (ReservaNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al actualizar el estado");
+        }
+    }
 }

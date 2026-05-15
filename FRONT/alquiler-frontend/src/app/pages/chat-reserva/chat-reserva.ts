@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, NgZone } from '@angular/core'; // 🔥 Importamos NgZone
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,12 +18,16 @@ export class ChatReservaComponent implements OnInit {
   private mensajesService = inject(MensajesService);
   private usuariosService = inject(UsuariosService);
   private reservasService = inject(ReservasService);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone); // 🔥 Inyectamos el gestor de zonas
 
   reservaId: number = 0;
   mensajes: Mensaje[] = [];
   nuevoMensaje: string = '';
   miId: number = 0;
+  
   cargando = true;
+  enviando = false;
 
   ngOnInit() {
     this.miId = this.usuariosService.obtenerMiIdDesdeToken() || 0;
@@ -37,31 +41,34 @@ export class ChatReservaComponent implements OnInit {
   cargarMensajes() {
     this.mensajesService.obtenerMensajesPorReserva(this.reservaId).subscribe({
       next: (data) => {
-        this.mensajes = data;
-        this.cargando = false;
-        this.scrollBottom();
+        // 🔥 NgZone.run asegura que la actualización de variables dispare el dibujado
+        this.ngZone.run(() => {
+          this.mensajes = data;
+          this.cargando = false;
+          this.cdr.detectChanges(); // Forzamos dibujado
+          setTimeout(() => this.scrollBottom(), 100); // Bajamos el scroll
+        });
       },
       error: (err) => {
         console.error('Error cargando chat:', err);
-        this.cargando = false;
+        this.ngZone.run(() => {
+          this.cargando = false;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
 
   enviar() {
-    if (!this.nuevoMensaje.trim() || !this.miId) return;
+    if (!this.nuevoMensaje.trim() || !this.miId || this.enviando) return;
+    
+    this.enviando = true;
 
-    // Para saber el receptor, necesitamos saber la reserva. 
-    // Como simplificación para la UI (y porque no tenemos el objeto reserva cargado),
-    // el backend normalmente deduce el receptor o lo toma del payload.
-    // Vamos a buscar la reserva para sacar al otro usuario.
     this.reservasService.obtenerReservaPorId(this.reservaId).subscribe({
       next: (reserva) => {
-        // Si yo soy el huesped, el receptor es el propietario
-        // Si yo soy el propietario, el receptor es el huesped
         let receptorId = 0;
         if (reserva.huesped?.id === this.miId) {
-          receptorId = reserva.propiedad?.propietario?.id || 0; // Ojo, la API debe devolver el prop.id
+          receptorId = reserva.propiedad?.propietario?.id || 0;
         } else {
           receptorId = reserva.huesped?.id || 0;
         }
@@ -70,27 +77,36 @@ export class ChatReservaComponent implements OnInit {
           contenido: this.nuevoMensaje,
           reserva: { id: this.reservaId },
           emisor: { id: this.miId },
-          receptor: { id: receptorId } // Podría ser 0 si la API no lo pasa, el backend debería saberlo igual.
+          receptor: { id: receptorId }
         };
 
         this.mensajesService.enviarMensaje(msj).subscribe({
           next: (msjGuardado) => {
-            this.mensajes.push(msjGuardado); // O recargar TODO
-            this.nuevoMensaje = '';
-            this.scrollBottom();
+            // 🔥 También aquí usamos NgZone para el nuevo mensaje
+            this.ngZone.run(() => {
+              this.mensajes.push(msjGuardado);
+              this.nuevoMensaje = '';
+              this.enviando = false;
+              this.cdr.detectChanges();
+              setTimeout(() => this.scrollBottom(), 50);
+            });
           },
-          error: (err) => console.error('Error enviando msj:', err)
+          error: (err) => {
+            console.error('Error enviando msj:', err);
+            this.ngZone.run(() => {
+              this.enviando = false;
+              this.cdr.detectChanges();
+            });
+          }
         });
       }
     });
   }
 
   scrollBottom() {
-    setTimeout(() => {
-      const container = document.getElementById('chat-box');
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    }, 100);
+    const container = document.getElementById('chat-box');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }
 }

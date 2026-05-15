@@ -98,4 +98,23 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"Usuario no encontrado\"}");
         }
     }
+ // ==========================================
+    // 3. RUTAS DE FAVORITOS
+    // ==========================================
+    @GetMapping("/{id}/favoritos")
+    public ResponseEntity<?> getFavoritos(@PathVariable int id) {
+        return ResponseEntity.ok(usuarioService.getFavoritos(id));
+    }
+
+    @PostMapping("/{id}/favoritos/{propiedadId}")
+    public ResponseEntity<?> addFavorito(@PathVariable int id, @PathVariable int propiedadId) {
+        usuarioService.addFavorito(id, propiedadId);
+        return ResponseEntity.ok("{\"mensaje\": \"Añadido a favoritos\"}");
+    }
+
+    @DeleteMapping("/{id}/favoritos/{propiedadId}")
+    public ResponseEntity<?> removeFavorito(@PathVariable int id, @PathVariable int propiedadId) {
+        usuarioService.removeFavorito(id, propiedadId);
+        return ResponseEntity.ok("{\"mensaje\": \"Eliminado de favoritos\"}");
+    }
 }

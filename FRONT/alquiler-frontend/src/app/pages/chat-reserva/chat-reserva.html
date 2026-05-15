@@ -1,8 +1,8 @@
 <div class="container chat-container">
   
   <div class="chat-header">
-    <button class="btn-back" routerLink="/mis-reservas">← Volver</button>
-    <h2 translate="no">Chat de la Reserva #{{ reservaId }}</h2>
+    <button class="btn-secondary" routerLink="/mis-reservas">← Volver</button>
+    <h2 translate="no">📣 Chat 📣</h2>
   </div>
 
   <div class="chat-card glass-panel">
@@ -36,7 +36,9 @@
           placeholder="Escribe un mensaje..."
           autocomplete="off"
         >
-        <button type="submit" class="btn-primary" [disabled]="!nuevoMensaje.trim() || cargando">Enviar</button>
+        <button type="submit" class="btn-secondary" [disabled]="!nuevoMensaje.trim() || enviando">
+  {{ enviando ? '...' : 'Enviar' }}
+</button>
       </form>
     </div>
 
