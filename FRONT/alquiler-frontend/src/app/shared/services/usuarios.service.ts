@@ -39,9 +39,16 @@ export class UsuariosService {
   // RUTAS DEL USUARIO (Unificadas)
   // ==========================================
 
-  // --- Mis Propiedades ---
+// --- Mis Propiedades ---
   misPropiedades(usuarioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/propiedades`);
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/propiedades`, {
+      // 🔥 Le decimos al navegador que NUNCA guarde esto en caché
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   }
 
   // --- Mis Reservas (Recibidas en mis propiedades) ---

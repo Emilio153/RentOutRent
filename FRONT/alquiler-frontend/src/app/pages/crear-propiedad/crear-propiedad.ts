@@ -67,11 +67,15 @@ export class CrearPropiedadComponent {
     });
   }
 
-  // Método auxiliar para asegurar que siempre redirige
+// Método auxiliar para asegurar que siempre redirige
   private finalizarGuardado() {
     this.cargando = false;
-    this.router.navigate(['/mis-propiedades']).then(() => {
-        console.log('Navegación completada a mis-propiedades');
-    });
+    
+    // 🔥 Le damos 100ms a la base de datos para que respire antes de pedirle la lista
+    setTimeout(() => {
+      this.router.navigate(['/mis-propiedades']).then(() => {
+          console.log('Navegación completada a mis-propiedades con datos frescos');
+      });
+    }, 100);
   }
 }
