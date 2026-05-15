@@ -38,7 +38,7 @@ public class SecurityConfig {
 				    // ==========================================
 				    // 🌍 RUTAS 100% PÚBLICAS (No necesitan Token en Postman)
 				    // ==========================================
-				    .requestMatchers("/api/auth/**").permitAll()
+				    .requestMatchers("/api/auth/**", "/error").permitAll()
 				    // 🔥 CORRECCIÓN: Ahora el catálogo sí es público para todo el mundo
 				    .requestMatchers(HttpMethod.GET, "/api/propiedades", "/api/propiedades/**", "/api/propiedades/buscar").permitAll()
 				    .requestMatchers(HttpMethod.GET, "/api/imagenes", "/api/imagenes/**").permitAll()

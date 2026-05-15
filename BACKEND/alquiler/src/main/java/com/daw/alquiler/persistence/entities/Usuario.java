@@ -47,17 +47,29 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private Rol rol; 
 
-    // =========================================================
+ // =========================================================
     // MÉTODOS DE SPRING SECURITY
     // =========================================================
 
+    // 🔥 1. AÑADIDO @JsonIgnore y el blindaje anti-nulos
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.rol == null) {
+            return List.of(); // Si está vacío, devolvemos lista vacía sin explotar
+        }
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.rol.name()));
     }
 
-    @Override public String getPassword() { return password; }
-    @Override public String getUsername() { return email; }
+    // 🔥 2. AÑADIDO @JsonIgnore
+    @JsonIgnore 
+    @Override 
+    public String getPassword() { return password; }
+    
+    // 🔥 3. AÑADIDO @JsonIgnore
+    @JsonIgnore 
+    @Override 
+    public String getUsername() { return email; }
 
     @JsonIgnore @Override public boolean isAccountNonExpired() { return true; }
     @JsonIgnore @Override public boolean isAccountNonLocked() { return true; }

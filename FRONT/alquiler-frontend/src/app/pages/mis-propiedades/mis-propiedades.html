@@ -1,6 +1,9 @@
 <div class="container admin-container">
   
   <div class="admin-header">
+    <div *ngIf="error" style="background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 1px solid #ef9a9a;">
+    <strong>¡Ups!</strong> {{ error }}
+  </div>
     <div>
       <h1 translate="no">Mis Propiedades</h1>
       <p>Gestiona los alojamientos que tienes publicados</p>
