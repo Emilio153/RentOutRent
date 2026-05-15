@@ -33,11 +33,11 @@ public class Propiedad {
     private LocalDate calendario; // Según tus specs
 
     @ManyToOne
-    @JoinColumn(name = "propietario_id")
-    private Propietario propietario;
+    // 🔥 CORRECCIÓN VITAL: El nombre en la BD es usuario_id, no propietario_id
+    @JoinColumn(name = "usuario_id")
+    private Usuario propietario;
 
     @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
     private List<ImagenPropiedad> imagenes;
 
     @OneToMany(mappedBy = "propiedad")

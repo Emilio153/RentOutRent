@@ -26,15 +26,22 @@ misPropiedades: Propiedad[] = [];
     this.cargarMisPropiedades();
   }
 
-  cargarMisPropiedades() {
-    this.propiedadesService.getMisPropiedades().subscribe({
+cargarMisPropiedades() {
+    // 🔥 Sacamos tu ID real del token y usamos el UsuariosService
+    const miId = this.usuariosService.obtenerMiIdDesdeToken();
+    if (!miId) {
+      this.error = 'No se ha podido identificar al usuario.';
+      this.cargando = false;
+      return;
+    }
+
+    this.usuariosService.misPropiedades(miId).subscribe({
       next: (datos) => {
-        this.misPropiedades = datos;
+        this.propiedades = datos;
         this.cargando = false;
       },
       error: (err) => {
         console.error('Error del backend:', err);
-        // Si da un error 403 o 401, suele ser porque el token ha caducado o está mal
         this.error = 'No se pudieron cargar tus propiedades. Revisa tu sesión.';
         this.cargando = false;
       }

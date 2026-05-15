@@ -23,22 +23,21 @@ public class Mensaje {
     @Column(columnDefinition = "TEXT")
     private String contenido;
 
-    // Relación opcional con reserva
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reserva_id", nullable = false)
-    @JsonIgnoreProperties({"fecha_inicio", "fecha_fin", "total", "estado", "creadoEn", "propiedad", "huesped","hibernateLazyInitializer", "handler"}) // Ignora todo esto de la reserva
+    @JsonIgnoreProperties({"fecha_inicio", "fecha_fin", "total", "estado", "creadoEn", "propiedad", "huesped","hibernateLazyInitializer", "handler"}) 
     private Reserva reserva;
 
-    // Emisor y Receptor son Personas
+    // 🔥 CORRECCIÓN: Ahora usan 'Usuario', no 'Persona'
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emisor_id", nullable = false)
-    @JsonIgnoreProperties({"email", "telefono", "username","hibernateLazyInitializer", "handler"}) // Solo dejará el ID y el Nombre
-    private Persona emisor;
+    @JsonIgnoreProperties({"email", "telefono", "password", "rol", "hibernateLazyInitializer", "handler"})
+    private Usuario emisor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receptor_id", nullable = false)
-    @JsonIgnoreProperties({"email", "telefono", "username","hibernateLazyInitializer", "handler"}) // Solo dejará el ID y el Nombre
-    private Persona receptor;
+    @JsonIgnoreProperties({"email", "telefono", "password", "rol", "hibernateLazyInitializer", "handler"})
+    private Usuario receptor;
     
     @Column(name = "enviado_en")
     private LocalDateTime enviadoEn;

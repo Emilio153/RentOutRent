@@ -34,25 +34,45 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-					
-					// --- RUTAS PÚBLICAS (No necesitan Token) ---
-					// .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-					// .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-					.requestMatchers("/api/auth/**", "/error").permitAll()
-					.requestMatchers(HttpMethod.GET, "/api/imagenes").permitAll()
-					
-					// Dejamos públicos los registros para que la gente pueda crear su cuenta
-					.requestMatchers(HttpMethod.POST, "/api/propietarios").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/huespedes").permitAll()
-					
-					// Dejamos que cualquiera pueda ver las propiedades disponibles
-					.requestMatchers(HttpMethod.GET, "/api/propiedades").permitAll()
-					.requestMatchers(HttpMethod.GET, "/api/propiedades/buscar").permitAll()
-					.requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll()
-					// --- RUTAS PRIVADAS (Necesitan Token JWT) ---
-					
-					.anyRequest().authenticated()
-			)
+			
+				    // ==========================================
+				    // 🌍 RUTAS 100% PÚBLICAS (No necesitan Token en Postman)
+				    // ==========================================
+				    .requestMatchers("/api/auth/**").permitAll()
+				    // 🔥 CORRECCIÓN: Ahora el catálogo sí es público para todo el mundo
+				    .requestMatchers(HttpMethod.GET, "/api/propiedades", "/api/propiedades/**", "/api/propiedades/buscar").permitAll()
+				    .requestMatchers(HttpMethod.GET, "/api/imagenes", "/api/imagenes/**").permitAll()
+				    
+				    // ==========================================
+				    // 🚫 RUTAS PROHIBIDAS
+				    // ==========================================
+				    // 🔥 CORRECCIÓN: NADIE puede ver la lista de todos los usuarios
+				    .requestMatchers(HttpMethod.GET, "/api/usuarios").denyAll()
+
+				    // ==========================================
+				    // 🔒 RUTAS PRIVADAS GENERALES (Cualquier logueado: PERSONA o USUARIO)
+				    // ==========================================
+				    // Ver detalle de tu propio usuario, tus reservas y propiedades
+				    .requestMatchers(HttpMethod.GET, "/api/usuarios/{id}/**").authenticated()
+				    // Crear reservas o verlas
+				    .requestMatchers("/api/reservas", "/api/reservas/**").authenticated()
+				    // Enviar y leer mensajes
+				    .requestMatchers("/api/mensajes", "/api/mensajes/**").authenticated()
+
+				    // ==========================================
+				    // 👑 RUTAS DE ANFITRIÓN (Solo rol USUARIO)
+				    // ==========================================
+				    // Solo el USUARIO puede crear, editar o borrar casas
+				    .requestMatchers(HttpMethod.POST, "/api/propiedades").hasRole("USUARIO")
+				    .requestMatchers(HttpMethod.PUT, "/api/propiedades/**").hasRole("USUARIO")
+				    .requestMatchers(HttpMethod.DELETE, "/api/propiedades/**").hasRole("USUARIO")
+				    
+				    // Solo el USUARIO puede añadir o borrar imágenes
+				    .requestMatchers(HttpMethod.POST, "/api/imagenes").hasRole("USUARIO")
+				    .requestMatchers(HttpMethod.DELETE, "/api/imagenes/**").hasRole("USUARIO")
+				    
+				    .anyRequest().authenticated()
+				)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 			
 		return http.build();

@@ -44,20 +44,6 @@ export class PropiedadesService {
   borrarPropiedad(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/propiedades/${id}`);
   }
-  // 🔥 NUEVO MÉTODO: Traer solo las propiedades del propietario logueado
-  getMisPropiedades(): Observable<Propiedad[]> {
-    // 1. Recuperamos el token que guardaste al hacer Login
-    const token = localStorage.getItem('token'); // Asegúrate de que el nombre coincide con cómo lo guardas en el login
-    
-    // 2. Preparamos las cabeceras de seguridad
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
-
-    // 3. Hacemos la petición (Asegúrate de que la URL coincide con la de tu controlador de Spring Boot)
-    // Normalmente es algo como /api/propiedades/propietario o /api/propiedades/mis-propiedades
-    return this.http.get<Propiedad[]>(`${this.apiUrl}/mis-propiedades`, { headers });
-  }
   // 7. Imágenes
   anadirImagen(propiedadId: number, url: string): Observable<any> {
     const payload = {

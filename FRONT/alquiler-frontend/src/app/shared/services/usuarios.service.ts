@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from '../../auth';
 
 export interface UsuarioInfo {
@@ -19,8 +19,7 @@ export class UsuariosService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  // Truco: Para extraer el ID del token JWT
-  // (El backend debería haber inyectado el "id" en el token, si no, habría que llamar a un endpoint de /me)
+  // 🔥 Ahora extrae el ID REAL que tu Spring Boot ha metido en el token
   obtenerMiIdDesdeToken(): number | null {
     const token = localStorage.getItem('jwt_token');
     if (!token) return null;
@@ -28,24 +27,32 @@ export class UsuariosService {
       const payloadBase64 = token.split('.')[1];
       const payloadDecoded = atob(payloadBase64);
       const valores = JSON.parse(payloadDecoded);
-      // Suponemos que guardaste el id como "id", "userId" o "sub" en el backend
-      return valores.id || valores.userId || 1; // Fallback temporal a 1 por si no está en el token
+      
+      // Ya no hay "|| 1". Si no hay ID, es que el token es inválido.
+      return valores.id || null; 
     } catch (e) {
       return null;
     }
   }
 
-  // --- Propietarios ---
-  misPropiedades(propietarioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/propietarios/${propietarioId}/propiedades`);
+  // ==========================================
+  // RUTAS DEL USUARIO (Unificadas)
+  // ==========================================
+
+  // --- Mis Propiedades ---
+  misPropiedades(usuarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/propiedades`);
   }
 
-  misReservasRecibidas(propietarioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/propietarios/${propietarioId}/reservas`);
+  // --- Mis Reservas (Recibidas en mis propiedades) ---
+  misReservasRecibidas(usuarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/reservas/recibidas`);
   }
 
-  // --- Huéspedes ---
-  misReservasRealizadas(huespedId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/huespedes/${huespedId}/reservas`);
+  // --- Mis Reservas (Realizadas para viajar) ---
+  misReservasRealizadas(usuarioId: number): Observable<any[]> {
+    // Si en tu backend las tratas juntas, esta URL puede ser igual a la anterior, 
+    // pero te las separo por si en tu Spring Boot has creado un endpoint distinto para cada cosa.
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/${usuarioId}/reservas`);
   }
 }

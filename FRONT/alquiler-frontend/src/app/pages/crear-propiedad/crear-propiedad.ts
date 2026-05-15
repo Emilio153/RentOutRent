@@ -41,32 +41,37 @@ export class CrearPropiedadComponent {
     this.propiedad.propietario = { id: miId };
 
     // 1. Crear propiedad
+    // 1. Crear propiedad
     this.propiedadesService.crearPropiedad(this.propiedad).subscribe({
       next: (nuevaPropiedad) => {
-        // 2. Si hay imagen, la añadimos llamando al endpoint de imágenes
-        if (this.imagenUrl.trim() && nuevaPropiedad.id) {
+        console.log('Propiedad creada:', nuevaPropiedad);
+        
+        if (this.imagenUrl.trim() && nuevaPropiedad && nuevaPropiedad.id) {
           this.propiedadesService.anadirImagen(nuevaPropiedad.id, this.imagenUrl).subscribe({
             next: () => {
-              this.cargando = false;
-              this.router.navigate(['/mis-propiedades']);
+              this.finalizarGuardado();
             },
             error: (err) => {
-              console.error('Error al subir imagen', err);
-              this.cargando = false;
-              // Navegamos igual, la propiedad se creó
-              this.router.navigate(['/mis-propiedades']);
+              console.error('Error imagen:', err);
+              this.finalizarGuardado(); // Redirigimos aunque falle la imagen
             }
           });
         } else {
-          this.cargando = false;
-          this.router.navigate(['/mis-propiedades']);
+          this.finalizarGuardado();
         }
       },
       error: (err) => {
         this.cargando = false;
         this.errorMensaje = 'Error al publicar la propiedad.';
-        console.error(err);
       }
+    });
+  }
+
+  // Método auxiliar para asegurar que siempre redirige
+  private finalizarGuardado() {
+    this.cargando = false;
+    this.router.navigate(['/mis-propiedades']).then(() => {
+        console.log('Navegación completada a mis-propiedades');
     });
   }
 }

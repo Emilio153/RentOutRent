@@ -5,21 +5,20 @@
   </div>
 
   <div class="nav-links">
-    <a routerLink="/catalogo" routerLinkActive="active" class="nav-item" style="cursor: pointer;">
+    <a (click)="irAExplorar()" class="nav-item" style="cursor: pointer;">
       Explorar
     </a>
     
-    <ng-container *ngIf="estaLogueado">
-      <a *ngIf="!esPropietario" routerLink="/favoritos" routerLinkActive="active" class="nav-item">
-  Favoritos <span class="badge-count" *ngIf="cantidadFavoritos > 0">{{ cantidadFavoritos }}</span>
-</a>
-      
-      <a routerLink="/mis-reservas" routerLinkActive="active" class="nav-item">
-        {{ esPropietario ? 'Reservas Recibidas' : 'Mis Viajes' }}
-      </a>
+    <ng-container *ngIf="estaLogueado && modoAnfitrion">
+      <a routerLink="/mis-propiedades" routerLinkActive="active" class="nav-item">Mis Alojamientos</a>
+      <a routerLink="/crear-propiedad" routerLinkActive="active" class="nav-item">Publicar</a>
+    </ng-container>
 
-      <a *ngIf="esPropietario" routerLink="/mis-propiedades" routerLinkActive="active" class="nav-item">
-        Mis Propiedades
+    <ng-container *ngIf="estaLogueado && !modoAnfitrion">
+      <a routerLink="/mis-reservas" routerLinkActive="active" class="nav-item">Mis Viajes</a>
+      <a routerLink="/favoritos" class="nav-item">
+        Favoritos 
+        <span class="badge-count" *ngIf="cantidadFavoritos > 0">{{cantidadFavoritos}}</span>
       </a>
     </ng-container>
   </div>
@@ -29,13 +28,17 @@
       <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
       <button type="button" class="btn-primary" routerLink="/registro">Regístrate</button>
     </ng-container>
-    
+
     <ng-container *ngIf="estaLogueado">
-      <button type="button" class="btn-secondary btn-ascender" (click)="cambiarRol()">
-        {{ esPropietario ? '👤 Cambiar a Huésped' : '🔑 Modo Anfitrión' }}
+      <button *ngIf="esPropietario" class="btn-outline" (click)="toggleModo()">
+        {{ modoAnfitrion ? '🎒 Cambiar a Viajero' : '🏠 Cambiar a Anfitrión' }}
+      </button>
+
+      <button *ngIf="!esPropietario" class="btn-secondary btn-ascender" (click)="ascenderAPropietario()">
+        🔑 Ser Anfitrión
       </button>
       
-      <button type="button" class="btn-danger" (click)="cerrarSesion()">Cerrar Sesión</button>
+      <button class="btn-danger" (click)="cerrarSesion()">Salir</button>
     </ng-container>
   </div>
 </nav>

@@ -24,10 +24,14 @@ public class ReservaService {
                 .orElseThrow(() -> new ReservaNotFoundException("No se encontró la reserva con ID: " + id));
     }
     
-    public List<Reserva> findByPropietario(int propietarioId) {
-        return reservaRepository.findByPropiedadPropietarioId(propietarioId);
+    // 🔥 CAMBIADO: Ahora se llama findReservasRecibidasByUsuarioId
+    public List<Reserva> findReservasRecibidasByUsuarioId(int usuarioId) {
+        // Asegúrate de que en ReservaRepository añadiste el método con el @Query que te pasé antes
+        return reservaRepository.findReservasRecibidasByUsuarioId(usuarioId);
     }
-    public List<Reserva> findByHuesped(int huespedId) {
+
+    // 🔥 CAMBIADO: Ahora se llama findByHuespedId
+    public List<Reserva> findByHuespedId(int huespedId) {
         return reservaRepository.findByHuespedId(huespedId);
     }
 

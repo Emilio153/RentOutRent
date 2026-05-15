@@ -19,7 +19,7 @@ public class ImagenPropiedad {
     private String url;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "propiedad_id")
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
     private Propiedad propiedad;
 }

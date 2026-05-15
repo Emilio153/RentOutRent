@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 
-import com.daw.alquiler.services.PersonaService;
+import com.daw.alquiler.services.UsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private JwtUtils jwtService; // Equivale a tu JwtUtils
 
 	@Autowired
-	private PersonaService personaService; // Equivale a tu UsuarioService
+	private UsuarioService personaService; // Equivale a tu UsuarioService
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

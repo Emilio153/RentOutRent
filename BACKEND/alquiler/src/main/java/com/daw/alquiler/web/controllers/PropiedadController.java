@@ -69,7 +69,8 @@ public class PropiedadController {
             Propiedad nuevaPropiedad = propiedadService.save(propiedad);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPropiedad);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"Error al crear la propiedad\"}");
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("{\"error\": \"Error al crear la propiedad: " + e.getMessage() + "\"}");
         }
     }
 

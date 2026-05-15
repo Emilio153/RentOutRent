@@ -24,10 +24,10 @@ public class PropiedadService {
                 .orElseThrow(() -> new PropiedadNotFoundException("No se encontró la propiedad con ID: " + id));
     }
     
-    public List<Propiedad> findByPropietario(int propietarioId) {
-        return propiedadRepository.findByPropietarioId(propietarioId);
+ // 🔥 CAMBIADO: Ahora se llama findByUsuarioId para que el Controlador lo encuentre
+    public List<Propiedad> findByUsuarioId(int usuarioId) {
+        return propiedadRepository.findByUsuarioId(usuarioId);
     }
-    
     public List<Propiedad> buscarPropiedades(String terminoBusqueda) {
         // Le pasamos el mismo término a ambos campos para que busque en título o dirección
         return propiedadRepository.findByDireccionContainingIgnoreCaseOrTituloContainingIgnoreCase(terminoBusqueda, terminoBusqueda);

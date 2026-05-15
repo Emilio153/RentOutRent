@@ -27,7 +27,7 @@ export class MisReservasComponent implements OnInit {
   }
 
   get esPropietario(): boolean {
-    return this.rolUsuario === 'PROPIETARIO' || this.rolUsuario === 'ROLE_PROPIETARIO';
+    return this.rolUsuario === 'USUARIO' || this.rolUsuario === 'ROLE_USUARIO';
   }
 
   cargarReservas() {

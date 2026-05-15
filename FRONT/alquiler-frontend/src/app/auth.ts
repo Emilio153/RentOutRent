@@ -91,12 +91,13 @@ export class AuthService {
     }
   }
   ascenderAPropietario(email: string): Observable<any> {
-  return this.http.put(`${this.apiUrl}/ascender`, { email }).pipe(
-    tap((respuesta: any) => {
-      // El backend nos devuelve un nuevo token con el rol actualizado.
-      // Lo pisamos en el localStorage para que el Navbar se actualice.
-      this.iniciarSesion(respuesta.nuevoToken);
-    })
-  );
-}
+    return this.http.put(`${this.apiUrl}/ascender`, { email }).pipe(
+      tap((respuesta: any) => {
+        // 🔥 CORRECCIÓN: El backend devuelve 'token', no 'nuevoToken'
+        if (respuesta && respuesta.token) {
+          this.iniciarSesion(respuesta.token);
+        }
+      })
+    );
+  }
 }

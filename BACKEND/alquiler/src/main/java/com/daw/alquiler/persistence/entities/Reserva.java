@@ -38,7 +38,7 @@ public class Reserva {
 
     @ManyToOne
     @JoinColumn(name = "huesped_id")
-    private Huesped huesped;
+    private Usuario huesped;
     
     @OneToMany(mappedBy = "reserva")
     @JsonIgnore

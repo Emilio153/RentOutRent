@@ -2,14 +2,18 @@ package com.daw.alquiler.persistence.repositories;
 
 import com.daw.alquiler.persistence.entities.Propiedad;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
-@Repository
 public interface PropiedadRepository extends JpaRepository<Propiedad, Integer> {
-    // Spring Boot hace la magia y crea la query: SELECT * FROM propiedad WHERE propietario_id = ?
-    List<Propiedad> findByPropietarioId(int propietarioId);
-    
- // Busca propiedades donde la dirección O el título contengan el texto buscado (ignorando mayúsculas/minúsculas)
+
+    // 1. Buscador público (Este ya lo tenías)
     List<Propiedad> findByDireccionContainingIgnoreCaseOrTituloContainingIgnoreCase(String direccion, String titulo);
+
+    // 🔥 2. LA SOLUCIÓN: Le decimos a Spring en lenguaje SQL (HQL) que busque por "propietario.id"
+    @Query("SELECT p FROM Propiedad p WHERE p.propietario.id = :usuarioId")
+    List<Propiedad> findByUsuarioId(@Param("usuarioId") int usuarioId);
+
 }

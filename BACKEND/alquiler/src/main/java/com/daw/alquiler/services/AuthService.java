@@ -1,6 +1,8 @@
 package com.daw.alquiler.services;
 
-import com.daw.alquiler.persistence.repositories.PersonaRepository; // O HuespedRepository
+import com.daw.alquiler.persistence.entities.Usuario;
+import com.daw.alquiler.persistence.entities.enums.Rol;
+import com.daw.alquiler.persistence.repositories.UsuarioRepository;
 import com.daw.alquiler.services.dto.LoginRequest;
 import com.daw.alquiler.services.dto.LoginResponse;
 import com.daw.alquiler.services.dto.RefreshDTO;
@@ -16,6 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class AuthService {
 
@@ -26,14 +31,14 @@ public class AuthService {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Inyectamos BCrypt
+    private PasswordEncoder passwordEncoder; 
 
-    // OJO: Inyecta el repositorio que uses para guardar usuarios
+    // 🔥 Usamos tu nuevo repositorio limpio
     @Autowired
-    private PersonaRepository personaRepository; 
+    private UsuarioRepository usuarioRepository; 
 
- // ==========================================
-    // 1. LÓGICA DE LOGIN
+    // ==========================================
+    // 1. LÓGICA DE LOGIN 
     // ==========================================
     public LoginResponse login(LoginRequest request) {
         try {
@@ -42,93 +47,96 @@ public class AuthService {
             );
 
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            String token = jwtUtils.generateToken(userDetails);
+            
+            // Buscamos al usuario en la BD (Ahora es de tipo Usuario)
+            Usuario usuario = usuarioRepository.findByEmail(request.getEmail());
+            
+            // Creamos la "mochila" y le metemos el ID y su Rol
+            Map<String, Object> claimsExtras = new HashMap<>();
+            if (usuario != null) {
+                claimsExtras.put("id", usuario.getId());
+                claimsExtras.put("rol", usuario.getRol().name()); // Opcional, pero muy útil para Angular
+            }
+
+            // Generamos el token
+            String token = jwtUtils.generateToken(claimsExtras, userDetails);
 
             return new LoginResponse(token);
 
         } catch (AuthenticationException e) {
-            // ¡Aquí ocurre la magia! Atrapamos el error de Spring y lanzamos el nuestro
             throw new AuthException("Credenciales incorrectas o usuario no encontrado");
         }
     }
- // ==========================================
+
+    // ==========================================
     // 2. LÓGICA DE REGISTRO
     // ==========================================
-public String register(RegisterRequest request) {
+    public String register(RegisterRequest request) {
         
-        // 1. Validar que las contraseñas coinciden (usando los nombres de tu DTO real)
+        // 1. Validar contraseñas
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("Las contraseñas no coinciden");
         }
 
-        // 2. Comprobar si el email ya existe en la BD
-        if (personaRepository.findByEmail(request.getEmail()) != null) {
+        // 2. Comprobar si el email ya existe
+        if (usuarioRepository.findByEmail(request.getEmail()) != null) {
             throw new IllegalArgumentException("El email ya está en uso");
         }
 
-        // 3. Crear la entidad (Usamos la herencia de tu BD)
-        com.daw.alquiler.persistence.entities.Persona nuevoUsuario;
+        // 3. Crear SIEMPRE un Usuario (¡Adiós herencia!)
+        Usuario nuevoUsuario = new Usuario();
         
-        if ("PROPIETARIO".equalsIgnoreCase(request.getTipoUsuario())) {
-            nuevoUsuario = new com.daw.alquiler.persistence.entities.Propietario();
-            
-            // 🔥 LÍNEA AÑADIDA: Rellenamos la columna tipo_usuario
-            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.PROPIETARIO);
-            
+        // 4. Asignamos el Rol según lo que pida el Frontend
+        // Si el frontend manda "PROPIETARIO" o "USUARIO", le damos el rol completo.
+        if ("PROPIETARIO".equalsIgnoreCase(request.getTipoUsuario()) || "USUARIO".equalsIgnoreCase(request.getTipoUsuario())) {
+            nuevoUsuario.setRol(Rol.USUARIO);
         } else {
-            // Por defecto, si no manda nada o manda "HUESPED", creamos un huésped
-            nuevoUsuario = new com.daw.alquiler.persistence.entities.Huesped();
-            
-            // 🔥 LÍNEA AÑADIDA: Rellenamos la columna tipo_usuario
-            nuevoUsuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.PROPIETARIO);
+            // Por defecto, cuenta básica que solo puede ver y reservar
+            nuevoUsuario.setRol(Rol.PERSONA); 
         }
         
-        // Mapeamos todos los campos de tu DTO
+        // 5. Mapeamos los datos
         nuevoUsuario.setNombre(request.getNombre());
         nuevoUsuario.setDni(request.getDni());
         nuevoUsuario.setEmail(request.getEmail());
         nuevoUsuario.setTelefono(request.getTelefono());
-        
-        // 🚨 IMPORTANTE: Asegúrate de tener estas dos líneas al final de tu método 
-        // (parece que se cortaron en tu mensaje)
         nuevoUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
-        personaRepository.save(nuevoUsuario);
+        
+        // 6. Guardamos
+        usuarioRepository.save(nuevoUsuario);
 
         return "Usuario registrado con éxito";
     }
+
     // ==========================================
-    // 3. LÓGICA DE REFRESH TOKEN (Simulada para el MVP)
+    // 3. LÓGICA DE REFRESH TOKEN 
     // ==========================================
     public LoginResponse refresh(RefreshDTO request) {
-        // En un proyecto real, aquí verificarías si el "request.getRefresh()" es válido en la BD.
-        // Para que tu app compile y tengas la estructura lista, devolvemos un token simulado.
-        
-        // return new LoginResponse("nuevo_token_generado");
         throw new UnsupportedOperationException("Refresh Token en construcción para la V2");
     }
- // ==========================================
-    // 4. LÓGICA DE ASCENSO A PROPIETARIO
+
     // ==========================================
+    // 4. LÓGICA DE ASCENSO A USUARIO COMPLETO
+    // ==========================================
+    // Mantenemos el nombre del método por si tu Angular o tu AuthController lo llaman así
     public LoginResponse ascenderAPropietario(String email) {
-        // 1. Buscamos al usuario (usando tu método que devuelve null si no existe)
-        com.daw.alquiler.persistence.entities.Persona usuario = personaRepository.findByEmail(email);
+        Usuario usuario = usuarioRepository.findByEmail(email);
         
         if (usuario == null) {
             throw new IllegalArgumentException("Usuario no encontrado con el email: " + email);
         }
 
-        // 2. Le cambiamos el rol al Enum
-        usuario.setTipoUsuario(com.daw.alquiler.persistence.entities.enums.TipoUsuario.PROPIETARIO);
-        
-        // 3. Guardamos los cambios
-        personaRepository.save(usuario);
+        // Le subimos de nivel cambiándole la etiqueta del Enum
+        usuario.setRol(Rol.USUARIO);
+        usuarioRepository.save(usuario);
 
-        // 4. Generamos el nuevo token.
-        // OJO: Asumo que tu entidad Persona implementa la interfaz UserDetails de Spring Security.
-        String nuevoToken = jwtUtils.generateToken((UserDetails) usuario);
+        // Generamos un nuevo token que ahora tendrá los permisos ampliados
+        Map<String, Object> claimsExtras = new HashMap<>();
+        claimsExtras.put("id", usuario.getId());
+        claimsExtras.put("rol", usuario.getRol().name());
 
-        // 5. Devolvemos el mismo DTO que usas en el Login
+        String nuevoToken = jwtUtils.generateToken(claimsExtras, (UserDetails) usuario);
+
         return new LoginResponse(nuevoToken);
     }
-    
 }

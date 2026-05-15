@@ -14,13 +14,51 @@ import { FavoritosService } from '../services/favoritos.service';
 export class Navbar {
   private authService = inject(AuthService);
   public router = inject(Router);
-  estaLogueado: boolean = false;
   private favoritosService = inject(FavoritosService);
+  
+  estaLogueado: boolean = false;
   cantidadFavoritos: number = 0;
-  esPropietario = false;
+  
+  // 🔥 Nuevo: Controla si estamos viendo el menú de anfitrión o de viajero
+  modoAnfitrion: boolean = false;
+
+  constructor() {
+    this.authService.isLoggedIn$.subscribe(status => this.estaLogueado = status);
+    this.favoritosService.favoritos$.subscribe(favs => this.cantidadFavoritos = favs.length);
+  }
+
+  get esPropietario(): boolean {
+    const rol = this.authService.getRolUsuario();
+    return rol === 'USUARIO' || rol === 'ROLE_USUARIO';
+  }
+
+  // 🔥 Cambia el interruptor visual
+  toggleModo() {
+    this.modoAnfitrion = !this.modoAnfitrion;
+    if (this.modoAnfitrion) {
+      this.router.navigate(['/mis-propiedades']);
+    } else {
+      this.router.navigate(['/catalogo']);
+    }
+  }
+
+  ascenderAPropietario() {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return;
+    const email = JSON.parse(atob(token.split('.')[1])).sub;
+    
+    this.authService.ascenderAPropietario(email).subscribe({
+      next: () => {
+        this.modoAnfitrion = true; // Activa el modo anfitrión al ascender
+        this.router.navigate(['/mis-propiedades']);
+      }
+    });
+  }
+
+  
+  // ... (mantén el resto de métodos como irAExplorar)
 
   irAExplorar() {
-    // Truco para forzar la recarga del componente si ya estamos en /catalogo
     if (this.router.url === '/catalogo') {
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.router.navigate(['/catalogo']);
@@ -30,66 +68,9 @@ export class Navbar {
     }
   }
 
-  constructor() {
-    this.authService.isLoggedIn$.subscribe(status => {
-      this.estaLogueado = status;
-    });
-    this.favoritosService.favoritos$.subscribe(favs => {
-      this.cantidadFavoritos = favs.length;
-    });
-  }
-
-  // get esPropietario(): boolean {
-  //   const rol = this.authService.getRolUsuario();
-  //   return rol === 'PROPIETARIO' || rol === 'ROLE_PROPIETARIO';
-  // }
-
-  // ascenderAPropietario() {
-  //   // Usamos el token para extraer el email o se lo pedimos
-  //   // Asumiremos que authService tiene el email en el payload
-  //   const token = localStorage.getItem('jwt_token');
-  //   if (!token) return;
-  //   try {
-  //     const payloadDecoded = atob(token.split('.')[1]);
-  //     const valores = JSON.parse(payloadDecoded);
-  //     const email = valores.sub || valores.email; // Depende del JWT de Spring
-  //     if (email) {
-  //       this.authService.ascenderAPropietario(email).subscribe({
-  //         next: () => {
-  //           alert('¡Enhorabuena! Ahora eres Propietario. Puedes publicar alojamientos.');
-  //           this.router.navigate(['/mis-propiedades']);
-  //         },
-  //         error: (err) => console.error(err)
-  //       });
-  //     } else {
-  //       alert('No se pudo encontrar el email en el token para ascender.');
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }
-cambiarRol() {
-    // Invertimos el valor (Si es true pasa a false, si es false pasa a true)
-    this.esPropietario = !this.esPropietario;
-    
-    // (Opcional) Si quieres que cambie de ruta al instante para que vea el efecto:
-    if (this.esPropietario) {
-      this.router.navigate(['/mis-propiedades']);
-    } else {
-      this.router.navigate(['/catalogo']);
-    }
-  }
-
-
+  
   cerrarSesion() {
-    // 1. Limpiamos los favoritos para que el próximo que entre no los vea
-    this.favoritosService.limpiarFavoritos();
-    
-    // 2. Tu código actual para cerrar sesión
-    // (borrar tokens, cambiar estaLogueado a false, etc.)
-    this.estaLogueado = false;
-    
-    // 3. Lo mandamos al login
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }
