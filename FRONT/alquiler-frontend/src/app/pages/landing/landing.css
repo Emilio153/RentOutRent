@@ -1,0 +1,117 @@
+.landing-container {
+  height: 100vh; /* Ocupa toda la pantalla */
+  width: 100vw;
+  background-color: #030a16; /* Color del espacio profundo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  perspective: 1000px; /* Fundamental para que la rotación parezca 3D */
+  /* Ajuste para que se solape con la Navbar si quieres */
+  margin-top: -80px; 
+  padding-top: 80px;
+}
+
+/* Estrellas estáticas */
+.stars {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.content {
+  z-index: 10;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  pointer-events: none; /* Que no bloquee los clics */
+}
+
+.content h1 {
+  font-size: 5rem;
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.content p {
+  font-size: 1.2rem;
+  color: #a0aec0;
+}
+
+/* =========================================
+   EL GLOBO TERRÁQUEO
+   ========================================= */
+.globe-wrapper {
+  position: relative;
+  width: 350px; /* Tamaño perfecto */
+  height: 350px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.3s ease;
+  perspective: 1000px;
+}
+
+.globe-wrapper:hover {
+  transform: scale(1.05) translateY(-5px); /* Efecto hover elegante */
+}
+
+.globe {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden; /* Fundamental para que la textura no se salga */
+  position: relative; /* Contexto para las superposiciones */
+  
+  /* 🔥 TEXTURA LOCAL NASA - LA CLAVE DE LA CLARIDAD */
+  background-image: url('/assets/img');
+  background-size: cover;
+  background-repeat: repeat-x;
+  
+  /* SOMBRA SUTIL EXTERNA - Le da volumen al planeta */
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  
+  /* ANIMACIÓN: Loops de la textura */
+  animation: loopMap 30s linear infinite;
+}
+
+/* 🔥 SUPERPOSICIÓN DE NOCHE (Night Side Overlay) */
+/* Esto crea el lado oscuro del planeta sin ocultar la textura completa */
+.globe::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%;
+  /* Un degradado radial: claro en la zona de "día", oscuro en la zona de "noche" */
+  background: radial-gradient(circle at 65% 50%, rgba(0,0,0,0) 25%, rgba(0,0,0,0.85) 65%);
+  z-index: 2; /* Por encima de la textura */
+}
+
+/* 🔥 HALO ATMOSFÉRICO BRILLANTE (Cyan/Azul/Verde) */
+/* Este halo debe ir DETRÁS del globo y ser mucho más potente */
+.globe-halo {
+  position: absolute;
+  top: -20px; left: -20px; right: -20px; bottom: -20px; /* Más grande que el globo */
+  border-radius: 50%;
+  /* Degradado multi-color brillante como la atmósfera real */
+  background: radial-gradient(circle at center, rgba(100, 200, 255, 0.4) 0%, rgba(100, 200, 255, 0.1) 60%, rgba(10, 25, 60, 0.5) 75%, transparent 90%);
+  pointer-events: none;
+  z-index: -1; /* ¡Importante! Detrás del globo */
+}
+
+@keyframes loopMap {
+  0% { background-position: 0 0; }
+  100% { background-position: 200% 0; } /* Loops infinitos horizontalmente */
+}

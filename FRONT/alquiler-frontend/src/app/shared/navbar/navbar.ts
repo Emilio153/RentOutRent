@@ -32,13 +32,13 @@ export class Navbar {
       } else {
         this.nombreUsuario = '';
       }
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
     
     // 🔥 3. Cuando lleguen los favoritos del servidor, despertamos a la burbuja
     this.favoritosService.favoritos$.subscribe(favs => {
       this.cantidadFavoritos = favs.length;
-      this.cdr.detectChanges(); 
+      this.cdr.markForCheck(); 
     });
   }
   // 🔥 Función para obtener el nombre del usuario desde la BD
@@ -49,7 +49,7 @@ export class Navbar {
       this.usuariosService.getUsuarioById(miId).subscribe({
         next: (u: any) => {
           this.nombreUsuario = u.nombre;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
         },
         error: (err: any) => console.error('Error al cargar nombre:', err)
       });

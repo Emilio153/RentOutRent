@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LandingComponent } from './pages/landing/landing';
 import { LoginComponent } from './login/login';
 import { CatalogoComponent } from './pages/catalogo/catalogo';
 import { FavoritosComponent } from './shared/favoritos/favoritos';
@@ -11,6 +12,7 @@ import { ChatReservaComponent } from './pages/chat-reserva/chat-reserva';
 
 export const routes: Routes = [
   // Públicas
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'catalogo', component: CatalogoComponent },
